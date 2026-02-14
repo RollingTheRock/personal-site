@@ -5,6 +5,7 @@ import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 import RelatedProjects from '../../components/RelatedProjects.astro';
 import ContentNavigation from '../../components/ContentNavigation.astro';
 import ShareButtons from '../../components/ShareButtons.astro';
+import { formatDateYearMonth } from '../../utils/date';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -28,13 +29,6 @@ const currentIndex = sortedProjects.findIndex(p => p.slug === project.slug);
 const prevProject = currentIndex < sortedProjects.length - 1 ? sortedProjects[currentIndex + 1] : undefined;
 const nextProject = currentIndex > 0 ? sortedProjects[currentIndex - 1] : undefined;
 
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-  }).format(date);
-}
-
 const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https://amiwrr.blog').toString();
 ---
 
@@ -57,7 +51,7 @@ const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https:/
 
       <!-- Date -->
       <div class="flex items-center justify-center gap-4 text-sm text-[var(--text-muted)] mb-6">
-        <span>{formatDate(project.data.date)}</span>
+        <span>{formatDateYearMonth(project.data.date)}</span>
       </div>
 
       <!-- Tech Stack -->
