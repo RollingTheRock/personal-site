@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Get all categories and tags
+const allCategories = [...new Set(posts.flatMap(p => p.data.categories))];
+const allTags = [...new Set(posts.flatMap(p => p.data.tags))];
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
+---
+
+<BaseLayout title="博客" description="探索技术、分享思考的文章集合">
+  <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold mb-4">博客</h1>
+      <p class="text-[var(--text-secondary)] max-w-lg mx-auto">
+        探索技术、分享思考的文章集合
+      </p>
+    </div>
+
+    <!-- Categories -->
+    {allCategories.length > 0 && (
+      <div class="flex flex-wrap justify-center gap-2 mb-12">
+        <a href="/blog" class="px-4 py-2 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-full text-sm">
+          全部
+        </a>
+        {allCategories.map(cat => (
+          <a
+            href={`/blog/categories/${cat.toLowerCase()}`}
+            class="px-4 py-2 border border-[var(--border-color)] rounded-full text-sm hover:bg-[var(--bg-secondary)] transition-colors"
+          >
+            {cat}
+          </a>
+        ))}
+      </div>
+    )}
+
+    <!-- Posts List -->
+    <div class="space-y-10">
+      {sortedPosts.map(post => (
+        <article class="group">
+          <a href={`/blog/${post.slug}`} class="block">
+            <div class="flex flex-col md:flex-row gap-6">
+              {post.data.image && (
+                <div class="md:w-1/3 aspect-video md:aspect-[4/3] overflow-hidden rounded-lg img-hover">
+                  <img
+                    src={post.data.image}
+                    alt={post.data.title}
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                  {post.data.categories.map(cat => (
+                    <span class="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                      {cat}
+                    </span>
+                  ))}
+                  <span class="text-xs text-[var(--text-muted)]">
+                    {formatDate(post.data.date)}
+                  </span>
+                </div>
+                <h2 class="text-xl md:text-2xl font-serif font-semibold mb-2 group-hover:text-[var(--text-secondary)] transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="text-[var(--text-secondary)] line-clamp-2">
+                  {post.data.description}
+                </p>
+              </div>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <!-- Empty State -->
+    {sortedPosts.length === 0 && (
+      <div class="text-center py-20">
+        <p class="text-[var(--text-muted)]">暂无文章，敬请期待...</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>

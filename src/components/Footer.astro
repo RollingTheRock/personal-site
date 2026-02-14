@@ -1,0 +1,94 @@
+---
+import { SITE_TITLE, GITHUB_URL, TWITTER_URL } from '../utils/constants';
+import Subscribe from './Subscribe.astro';
+
+const currentYear = new Date().getFullYear();
+
+const footerLinks = [
+  { href: '/blog', label: '博客' },
+  { href: '/projects', label: '项目' },
+  { href: '/videos', label: '视频' },
+  { href: '/about', label: '关于' },
+  { href: '/rss.xml', label: 'RSS' },
+];
+
+const socialLinks = [
+  { href: GITHUB_URL, label: 'GitHub', icon: 'github' },
+  { href: TWITTER_URL, label: 'Twitter', icon: 'twitter' },
+];
+---
+
+<footer class="border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
+  <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Brand -->
+      <div>
+        <a href="/" class="text-xl font-semibold font-serif tracking-tight">
+          {SITE_TITLE}
+        </a>
+        <p class="mt-2 text-sm text-[var(--text-muted)]">
+          探索技术、分享思考、记录成长
+        </p>
+
+        <!-- Social Links -->
+        <div class="flex space-x-4 mt-4">
+          {socialLinks.map(link => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+              aria-label={link.label}
+            >
+              {link.icon === 'github' && (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
+              )}
+              {link.icon === 'twitter' && (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                </svg>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-4">
+          导航
+        </h3>
+        <nav class="space-y-2">
+          {footerLinks.map(link => (
+            <a
+              href={link.href}
+              class="block text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <!-- Subscribe -->
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-4">
+          订阅更新
+        </h3>
+        <Subscribe compact={true} />
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="mt-12 pt-8 border-t border-[var(--border-color)] flex flex-col sm:flex-row justify-between items-center">
+      <p class="text-sm text-[var(--text-muted)]">
+        &copy; {currentYear} {SITE_TITLE}. All rights reserved.
+      </p>
+      <p class="text-sm text-[var(--text-muted)] mt-2 sm:mt-0">
+        Built with <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--text-primary)]">Astro</a>
+      </p>
+    </div>
+  </div>
+</footer>

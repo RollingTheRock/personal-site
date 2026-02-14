@@ -1,0 +1,63 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+const BUTTONDOWN_URL = 'https://buttondown.email/api/emails/embed-subscribe/rollingtherock';
+---
+
+{compact ? (
+  <!-- Compact version for footer -->
+  <form
+    action={BUTTONDOWN_URL}
+    method="post"
+    target="_blank"
+    class="flex gap-2"
+  >
+    <input
+      type="email"
+      name="email"
+      placeholder="your@email.com"
+      required
+      class="flex-1 px-3 py-2 text-sm bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:border-[var(--text-primary)] transition-colors"
+    />
+    <button
+      type="submit"
+      class="px-4 py-2 text-sm font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity"
+    >
+      订阅
+    </button>
+  </form>
+) : (
+  <!-- Full version for dedicated section -->
+  <div class="bg-[var(--bg-secondary)] rounded-2xl p-8 md:p-12">
+    <h3 class="text-2xl font-serif font-semibold mb-3">订阅更新</h3>
+    <p class="text-[var(--text-secondary)] mb-6 max-w-md">
+      获取最新的技术文章、项目更新和思考分享。没有垃圾邮件，随时取消订阅。
+    </p>
+    <form
+      action={BUTTONDOWN_URL}
+      method="post"
+      target="_blank"
+      class="flex flex-col sm:flex-row gap-3 max-w-md"
+    >
+      <input
+        type="email"
+        name="email"
+        placeholder="your@email.com"
+        required
+        class="flex-1 px-4 py-3 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:border-[var(--text-primary)] transition-colors"
+      />
+      <button
+        type="submit"
+        class="px-6 py-3 font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity"
+      >
+        订阅
+      </button>
+    </form>
+    <p class="text-xs text-[var(--text-muted)] mt-4">
+      Powered by <a href="https://buttondown.email" target="_blank" rel="noopener noreferrer" class="underline">Buttondown</a>
+    </p>
+  </div>
+)}

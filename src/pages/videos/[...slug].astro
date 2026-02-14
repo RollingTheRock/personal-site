@@ -1,0 +1,101 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const videos = await getCollection('videos');
+  return videos.map((video) => ({
+    params: { slug: video.slug },
+    props: { video },
+  }));
+}
+
+type Props = {
+  video: CollectionEntry<'videos'>;
+};
+
+const { video } = Astro.props;
+const { Content } = await video.render();
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
+
+function getPlatformName(platform: string) {
+  return platform === 'bilibili' ? 'Bilibili' : 'YouTube';
+}
+
+function getEmbedUrl(videoId: string, platform: string) {
+  if (platform === 'bilibili') {
+    return `https://player.bilibili.com/player.html?bvid=${videoId}&page=1&high_quality=1`;
+  }
+  return `https://www.youtube.com/embed/${videoId}`;
+}
+
+function getOriginalUrl(videoId: string, platform: string) {
+  if (platform === 'bilibili') {
+    return `https://www.bilibili.com/video/${videoId}`;
+  }
+  return `https://www.youtube.com/watch?v=${videoId}`;
+}
+---
+
+<BaseLayout
+  title={video.data.title}
+  description={video.data.description}
+  image={video.data.thumbnail}
+>
+  <article class="py-12 md:py-20">
+    <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Video Player -->
+      <div class="aspect-video rounded-xl overflow-hidden bg-black mb-8">
+        <iframe
+          src={getEmbedUrl(video.data.videoId, video.data.platform)}
+          title={video.data.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          class="w-full h-full"
+        ></iframe>
+      </div>
+
+      <!-- Header -->
+      <header class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-serif font-bold mb-3">
+          {video.data.title}
+        </h1>
+
+        <div class="flex items-center gap-3 text-sm text-[var(--text-muted)]">
+          <span>{formatDate(video.data.date)}</span>
+          <span>·</span>
+          <span>{getPlatformName(video.data.platform)}</span>
+        </div>
+      </header>
+
+      <!-- Description -->
+      <div class="article-content">
+        <Content />
+      </div>
+
+      <!-- External Link -->
+      <div class="mt-8 pt-8 border-t border-[var(--border-color)]">
+        <a
+          href={getOriginalUrl(video.data.videoId, video.data.platform)}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          在 {getPlatformName(video.data.platform)} 上观看
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,103 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+type Props = {
+  project: CollectionEntry<'projects'>;
+};
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+  }).format(date);
+}
+---
+
+<BaseLayout
+  title={project.data.title}
+  description={project.data.description}
+  image={project.data.image}
+>
+  <article class="py-12 md:py-20">
+    <!-- Header -->
+    <header class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4">
+        {project.data.title}
+      </h1>
+
+      <p class="text-lg text-[var(--text-secondary)] mb-6">
+        {project.data.description}
+      </p>
+
+      <!-- Tech Stack -->
+      <div class="flex flex-wrap justify-center gap-2 mb-6">
+        {project.data.tech.map(t => (
+          <span class="px-3 py-1 bg-[var(--bg-secondary)] rounded-full text-sm">
+            {t}
+          </span>
+        ))}
+      </div>
+
+      <!-- Links -->
+      <div class="flex justify-center gap-4">
+        {project.data.github && (
+          <a
+            href={project.data.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+            查看源码
+          </a>
+        )}
+        {project.data.demo && (
+          <a
+            href={project.data.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 border border-[var(--border-color)] rounded-lg font-medium hover:bg-[var(--bg-secondary)] transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            在线预览
+          </a>
+        )}
+      </div>
+    </header>
+
+    <!-- Cover Image -->
+    {project.data.image && (
+      <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <img
+          src={project.data.image}
+          alt={project.data.title}
+          class="w-full aspect-video object-cover rounded-xl"
+        />
+      </div>
+    )}
+
+    <!-- Content -->
+    <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="article-content">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
