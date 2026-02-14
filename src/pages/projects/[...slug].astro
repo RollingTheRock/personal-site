@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -83,15 +84,17 @@ function formatDate(date: Date) {
     </header>
 
     <!-- Cover Image -->
-    {project.data.image && (
-      <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+    <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+      {project.data.image ? (
         <img
           src={project.data.image}
           alt={project.data.title}
           class="w-full aspect-video object-cover rounded-xl"
         />
-      </div>
-    )}
+      ) : (
+        <ImagePlaceholder alt={project.data.title} aspectRatio="16/9" class="w-full rounded-xl" />
+      )}
+    </div>
 
     <!-- Content -->
     <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">

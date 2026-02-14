@@ -1,12 +1,10 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
-import vercel from '@astrojs/vercel/static';
 
 export default defineConfig({
-  site: 'https://rollingtherock.github.io',
+  site: 'https://amiwrr.blog',
   output: 'static',
-  adapter: vercel(),
   integrations: [
     tailwind({
       applyBaseStyles: false,

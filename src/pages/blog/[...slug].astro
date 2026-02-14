@@ -2,6 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
+import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -63,15 +64,17 @@ function formatDate(date: Date) {
     </header>
 
     <!-- Cover Image -->
-    {post.data.image && (
-      <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+    <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+      {post.data.image ? (
         <img
           src={post.data.image}
           alt={post.data.title}
           class="w-full aspect-video object-cover rounded-xl"
         />
-      </div>
-    )}
+      ) : (
+        <ImagePlaceholder alt={post.data.title} aspectRatio="21/9" class="w-full rounded-xl" />
+      )}
+    </div>
 
     <!-- Content -->
     <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">

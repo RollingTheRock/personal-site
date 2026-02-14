@@ -1,0 +1,18 @@
+---
+interface Props {
+  alt: string;
+  aspectRatio?: string;
+  class?: string;
+}
+
+const { alt, aspectRatio = "16/9", class: className = "" } = Astro.props;
+---
+
+<div
+  class={`placeholder-image overflow-hidden ${className}`}
+  style={`aspect-ratio: ${aspectRatio};`}
+>
+  <div class="w-full h-full bg-gradient-to-br from-[var(--bg-tertiary)] to-[var(--bg-secondary)] flex items-center justify-center border border-[var(--border-color)] rounded-lg">
+    <span class="text-[var(--text-muted)] text-sm">{alt}</span>
+  </div>
+</div>

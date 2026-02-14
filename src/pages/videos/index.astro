@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 import { getCollection } from 'astro:content';
 
 const videos = await getCollection('videos');
@@ -49,9 +50,7 @@ function getEmbedUrl(video: typeof videos[0]) {
                   class="w-full h-full object-cover"
                 />
               ) : (
-                <div class="w-full h-full flex items-center justify-center text-6xl">
-                  🎬
-                </div>
+                <ImagePlaceholder alt={video.data.title} aspectRatio="16/9" class="w-full h-full" />
               )}
               <div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
                 <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">

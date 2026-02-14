@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 import { getCollection } from 'astro:content';
 
 const projects = await getCollection('projects');
@@ -27,19 +28,17 @@ function formatDate(date: Date) {
       {sortedProjects.map(project => (
         <article class="group card-hover bg-[var(--bg-secondary)] rounded-xl overflow-hidden">
           <a href={`/projects/${project.slug}`} class="block">
-            {project.data.image ? (
-              <div class="aspect-video overflow-hidden img-hover">
+            <div class="aspect-video overflow-hidden img-hover">
+              {project.data.image ? (
                 <img
                   src={project.data.image}
                   alt={project.data.title}
                   class="w-full h-full object-cover"
                 />
-              </div>
-            ) : (
-              <div class="aspect-video bg-[var(--bg-tertiary)] flex items-center justify-center text-4xl">
-                📦
-              </div>
-            )}
+              ) : (
+                <ImagePlaceholder alt={project.data.title} aspectRatio="16/9" class="w-full h-full" />
+              )}
+            </div>
 
             <div class="p-5">
               <h2 class="text-lg font-semibold mb-2 group-hover:text-[var(--text-secondary)] transition-colors">
