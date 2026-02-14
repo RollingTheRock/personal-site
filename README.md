@@ -4,13 +4,15 @@
 
 ## 在线预览
 
-🌐 [https://rollingtherock.github.io](https://rollingtherock.github.io)
+[![Deploy to GitHub Pages](https://github.com/RollingTheRock/personal-site/actions/workflows/deploy.yml/badge.svg)](https://github.com/RollingTheRock/personal-site/actions/workflows/deploy.yml)
+
+🌐 [https://amiwrr.blog](https://amiwrr.blog)
 
 ## 技术栈
 
 - **框架**: [Astro](https://astro.build) - 内容驱动网站的完美选择
 - **样式**: [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS
-- **部署**: [Vercel](https://vercel.com) - 边缘网络加速
+- **部署**: [GitHub Pages](https://pages.github.com) - 自动构建部署
 - **评论**: [Giscus](https://giscus.app) - 基于 GitHub Discussions
 - **订阅**: [Buttondown](https://buttondown.email) - 简洁的 Newsletter
 
@@ -127,11 +129,35 @@ thumbnail: "/images/videos/thumb.jpg"
 
 ## 部署
 
-项目使用 Vercel 自动部署：
+项目使用 GitHub Actions 自动部署到 GitHub Pages：
 
-1. 推送代码到 GitHub
-2. Vercel 自动构建并部署
-3. PR 创建时会生成预览链接
+### 自动部署
+
+1. 推送代码到 `main` 分支
+2. GitHub Actions 自动触发构建
+3. 构建完成后自动部署到 GitHub Pages
+
+### 手动触发
+
+在 GitHub 仓库页面：
+- 进入 **Actions** 标签页
+- 选择 **Deploy to GitHub Pages** 工作流
+- 点击 **Run workflow**
+
+### 首次设置（必需）
+
+1. **启用 GitHub Pages**
+   - 进入仓库 **Settings** → **Pages**
+   - **Source**: 选择 "GitHub Actions"
+
+2. **配置自定义域名**（可选）
+   - 在 **Pages** 设置中添加自定义域名: `amiwrr.blog`
+   - 勾选 **Enforce HTTPS**（推荐）
+   - 或在仓库根目录创建 `public/CNAME` 文件（已配置）
+
+3. **验证部署**
+   - 访问 https://amiwrr.blog 查看站点
+   - 或在 **Settings** → **Pages** 查看部署状态
 
 ## 致谢
 
