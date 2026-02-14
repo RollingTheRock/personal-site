@@ -1,27 +1,17 @@
 ---
 import ImagePlaceholder from './ImagePlaceholder.astro';
+import { formatDateFull } from '../utils/date';
+import { getPlatformName, type VideoPlatform } from '../utils/platform';
 
 interface Props {
   title: string;
   slug: string;
   date: Date;
-  platform: 'bilibili' | 'youtube';
+  platform: VideoPlatform;
   thumbnail?: string;
 }
 
 const { title, slug, date, platform, thumbnail } = Astro.props;
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date);
-}
-
-function getPlatformName(platform: string) {
-  return platform === 'bilibili' ? 'Bilibili' : 'YouTube';
-}
 ---
 
 <article class="group">
@@ -57,7 +47,7 @@ function getPlatformName(platform: string) {
         {title}
       </h2>
       <p class="text-sm text-[var(--text-muted)] mt-1">
-        {formatDate(date)}
+        {formatDateFull(date)}
       </p>
     </div>
   </a>

@@ -1,0 +1,105 @@
+---
+import { AUTHOR, SITE_TITLE, SITE_URL } from '../utils/constants';
+
+interface BlogPostingProps {
+  type: 'BlogPosting';
+  title: string;
+  description: string;
+  url: string;
+  datePublished: Date;
+  dateModified?: Date;
+  image?: string;
+  tags?: string[];
+}
+
+interface WebSiteProps {
+  type: 'WebSite';
+  url?: string;
+}
+
+interface PersonProps {
+  type: 'Person';
+}
+
+type Props = BlogPostingProps | WebSiteProps | PersonProps;
+
+const props = Astro.props;
+
+function generateSchema() {
+  const baseUrl = SITE_URL;
+
+  switch (props.type) {
+    case 'BlogPosting': {
+      const schema = {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: props.title,
+        description: props.description,
+        url: props.url,
+        datePublished: props.datePublished.toISOString(),
+        dateModified: (props.dateModified || props.datePublished).toISOString(),
+        author: {
+          '@type': 'Person',
+          name: AUTHOR.name,
+          url: baseUrl,
+        },
+        publisher: {
+          '@type': 'Person',
+          name: AUTHOR.name,
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': props.url,
+        },
+      } as Record<string, unknown>;
+
+      if (props.image) {
+        schema.image = new URL(props.image, baseUrl).toString();
+      }
+
+      if (props.tags && props.tags.length > 0) {
+        schema.keywords = props.tags.join(', ');
+      }
+
+      return schema;
+    }
+
+    case 'WebSite': {
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: SITE_TITLE,
+        url: props.url || baseUrl,
+        description: '探索技术、分享思考、记录成长',
+        author: {
+          '@type': 'Person',
+          name: AUTHOR.name,
+        },
+      };
+    }
+
+    case 'Person': {
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: AUTHOR.name,
+        url: baseUrl,
+        sameAs: [
+          'https://github.com/RollingTheRock',
+          'https://twitter.com/RollingTheRock',
+        ],
+        description: AUTHOR.bio,
+      };
+    }
+
+    default:
+      return null;
+  }
+}
+
+const schema = generateSchema();
+---
+
+{schema && (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+)}
