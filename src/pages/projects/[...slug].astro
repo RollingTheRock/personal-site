@@ -2,6 +2,9 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
+import RelatedProjects from '../../components/RelatedProjects.astro';
+import ContentNavigation from '../../components/ContentNavigation.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -18,17 +21,28 @@ type Props = {
 const { project } = Astro.props;
 const { Content } = await project.render();
 
+// Get all projects for related and navigation
+const allProjects = await getCollection('projects');
+const sortedProjects = allProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const currentIndex = sortedProjects.findIndex(p => p.slug === project.slug);
+const prevProject = currentIndex < sortedProjects.length - 1 ? sortedProjects[currentIndex + 1] : undefined;
+const nextProject = currentIndex > 0 ? sortedProjects[currentIndex - 1] : undefined;
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',
+    month: 'long',
   }).format(date);
 }
+
+const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https://amiwrr.blog').toString();
 ---
 
 <BaseLayout
   title={project.data.title}
   description={project.data.description}
   image={project.data.image}
+  type="article"
 >
   <article class="py-12 md:py-20">
     <!-- Header -->
@@ -41,10 +55,15 @@ function formatDate(date: Date) {
         {project.data.description}
       </p>
 
+      <!-- Date -->
+      <div class="flex items-center justify-center gap-4 text-sm text-[var(--text-muted)] mb-6">
+        <span>{formatDate(project.data.date)}</span>
+      </div>
+
       <!-- Tech Stack -->
-      <div class="flex flex-wrap justify-center gap-2 mb-6">
+      <div class="flex flex-wrap justify-center gap-2 mb-8">
         {project.data.tech.map(t => (
-          <span class="px-3 py-1 bg-[var(--bg-secondary)] rounded-full text-sm">
+          <span class="px-3 py-1 bg-[var(--bg-secondary)] rounded-full text-sm text-[var(--text-secondary)]">
             {t}
           </span>
         ))}
@@ -101,6 +120,31 @@ function formatDate(date: Date) {
       <div class="article-content">
         <Content />
       </div>
+
+      <!-- Share Buttons -->
+      <div class="mt-12 pt-8 border-t border-[var(--border-color)]">
+        <ShareButtons
+          title={project.data.title}
+          url={canonicalURL}
+          description={project.data.description}
+        />
+      </div>
+
+      <!-- Navigation -->
+      <ContentNavigation
+        prev={prevProject ? { slug: prevProject.slug, data: { title: prevProject.data.title } } : undefined}
+        next={nextProject ? { slug: nextProject.slug, data: { title: nextProject.data.title } } : undefined}
+        basePath="/projects"
+        prevLabel="上一个项目"
+        nextLabel="下一个项目"
+      />
+
+      <!-- Related Projects -->
+      <RelatedProjects
+        currentSlug={project.slug}
+        tech={project.data.tech}
+        allProjects={sortedProjects}
+      />
     </div>
   </article>
 </BaseLayout>

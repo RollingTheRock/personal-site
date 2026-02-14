@@ -1,0 +1,55 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  currentSlug: string;
+  tech: string[];
+  allProjects: CollectionEntry<'projects'>[];
+}
+
+const { currentSlug, tech, allProjects } = Astro.props;
+
+// Calculate relevance score based on tech stack overlap
+const scoredProjects = allProjects
+  .filter(project => project.slug !== currentSlug)
+  .map(project => {
+    let score = 0;
+
+    // Tech stack match
+    project.data.tech.forEach(t => {
+      if (tech.includes(t)) score += 2;
+    });
+
+    return { project, score };
+  })
+  .filter(({ score }) => score > 0)
+  .sort((a, b) => {
+    // Sort by score first, then by date
+    if (b.score !== a.score) return b.score - a.score;
+    return b.project.data.date.valueOf() - a.project.data.date.valueOf();
+  })
+  .slice(0, 3)
+  .map(({ project }) => project);
+---
+
+{scoredProjects.length > 0 && (
+  <section class="related-projects mt-16 pt-12 border-t border-[var(--border-color)]">
+    <h2 class="text-2xl font-serif font-semibold mb-8 text-[var(--text-primary)]">
+      相关项目
+    </h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      {scoredProjects.map(project => (
+        <ProjectCard
+          title={project.data.title}
+          description={project.data.description}
+          slug={project.slug}
+          image={project.data.image}
+          tech={project.data.tech}
+          github={project.data.github}
+          demo={project.data.demo}
+        />
+      ))}
+    </div>
+  </section>
+)}

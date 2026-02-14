@@ -1,0 +1,71 @@
+---
+interface Item {
+  slug: string;
+  data: {
+    title: string;
+  };
+}
+
+interface Props {
+  prev?: Item;
+  next?: Item;
+  basePath: string;
+  prevLabel?: string;
+  nextLabel?: string;
+}
+
+const {
+  prev,
+  next,
+  basePath,
+  prevLabel = '上一篇',
+  nextLabel = '下一篇'
+} = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="content-navigation grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 pt-12 border-t border-[var(--border-color)]">
+    {prev && (
+      <a
+        href={`${basePath}/${prev.slug}`}
+        class="group flex flex-col p-4 -mx-4 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors duration-200"
+      >
+        <span class="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-2 flex items-center gap-1">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          {prevLabel}
+        </span>
+        <span class="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-secondary)] transition-colors line-clamp-2">
+          {prev.data.title}
+        </span>
+      </a>
+    )}
+
+    {next && (
+      <a
+        href={`${basePath}/${next.slug}`}
+        class="group flex flex-col items-end p-4 -mx-4 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors duration-200 text-right md:col-start-2"
+      >
+        <span class="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-2 flex items-center gap-1">
+          {nextLabel}
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </span>
+        <span class="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-secondary)] transition-colors line-clamp-2">
+          {next.data.title}
+        </span>
+      </a>
+    )}
+  </nav>
+)}
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

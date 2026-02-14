@@ -1,6 +1,9 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedVideos from '../../components/RelatedVideos.astro';
+import ContentNavigation from '../../components/ContentNavigation.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
 
 export async function getStaticPaths() {
   const videos = await getCollection('videos');
@@ -17,6 +20,13 @@ type Props = {
 const { video } = Astro.props;
 const { Content } = await video.render();
 
+// Get all videos for related and navigation
+const allVideos = await getCollection('videos');
+const sortedVideos = allVideos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const currentIndex = sortedVideos.findIndex(v => v.slug === video.slug);
+const prevVideo = currentIndex < sortedVideos.length - 1 ? sortedVideos[currentIndex + 1] : undefined;
+const nextVideo = currentIndex > 0 ? sortedVideos[currentIndex - 1] : undefined;
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',
@@ -29,11 +39,11 @@ function getPlatformName(platform: string) {
   return platform === 'bilibili' ? 'Bilibili' : 'YouTube';
 }
 
-function getEmbedUrl(videoId: string, platform: string) {
+function getPlatformIcon(platform: string) {
   if (platform === 'bilibili') {
-    return `https://player.bilibili.com/player.html?bvid=${videoId}&page=1&high_quality=1`;
+    return `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z"/></svg>`;
   }
-  return `https://www.youtube.com/embed/${videoId}`;
+  return `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`;
 }
 
 function getOriginalUrl(videoId: string, platform: string) {
@@ -42,60 +52,126 @@ function getOriginalUrl(videoId: string, platform: string) {
   }
   return `https://www.youtube.com/watch?v=${videoId}`;
 }
+
+const canonicalURL = new URL(`/videos/${video.slug}`, Astro.site || 'https://amiwrr.blog').toString();
 ---
 
 <BaseLayout
   title={video.data.title}
   description={video.data.description}
   image={video.data.thumbnail}
+  type="article"
 >
   <article class="py-12 md:py-20">
-    <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Video Player -->
-      <div class="aspect-video rounded-xl overflow-hidden bg-black mb-8">
-        <iframe
-          src={getEmbedUrl(video.data.videoId, video.data.platform)}
-          title={video.data.title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          class="w-full h-full"
-        ></iframe>
+    <!-- Header -->
+    <header class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+      <!-- Platform Badge -->
+      <div class="flex justify-center mb-4">
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--bg-secondary)] rounded-full text-sm text-[var(--text-secondary)]">
+          <Fragment set:html={getPlatformIcon(video.data.platform)} />
+          {getPlatformName(video.data.platform)}
+        </span>
       </div>
 
-      <!-- Header -->
-      <header class="mb-8">
-        <h1 class="text-2xl md:text-3xl font-serif font-bold mb-3">
-          {video.data.title}
-        </h1>
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4">
+        {video.data.title}
+      </h1>
 
-        <div class="flex items-center gap-3 text-sm text-[var(--text-muted)]">
-          <span>{formatDate(video.data.date)}</span>
-          <span>·</span>
-          <span>{getPlatformName(video.data.platform)}</span>
+      <p class="text-lg text-[var(--text-secondary)] mb-6">
+        {video.data.description}
+      </p>
+
+      <div class="flex items-center justify-center gap-4 text-sm text-[var(--text-muted)]">
+        <span>{formatDate(video.data.date)}</span>
+      </div>
+    </header>
+
+    <!-- Video Cover with Play Button -->
+    <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+      <a
+        href={getOriginalUrl(video.data.videoId, video.data.platform)}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group relative block w-full aspect-video rounded-xl overflow-hidden bg-black"
+      >
+        {video.data.thumbnail ? (
+          <img
+            src={video.data.thumbnail}
+            alt={video.data.title}
+            class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+          />
+        ) : (
+          <div class="w-full h-full bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-tertiary)] flex items-center justify-center">
+            <svg class="w-20 h-20 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        )}
+        <!-- Play Button Overlay -->
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-8 h-8 text-[var(--text-primary)] ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
         </div>
-      </header>
+        <!-- External Link Indicator -->
+        <div class="absolute top-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-xs flex items-center gap-1">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          在 {getPlatformName(video.data.platform)} 观看
+        </div>
+      </a>
+    </div>
 
-      <!-- Description -->
+    <!-- Content -->
+    <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">
       <div class="article-content">
         <Content />
       </div>
 
-      <!-- External Link -->
-      <div class="mt-8 pt-8 border-t border-[var(--border-color)]">
+      <!-- External Link Button -->
+      <div class="mt-12 pt-8 border-t border-[var(--border-color)] text-center">
         <a
           href={getOriginalUrl(video.data.videoId, video.data.platform)}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg font-medium hover:opacity-90 transition-opacity"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
+          <Fragment set:html={getPlatformIcon(video.data.platform)} />
           在 {getPlatformName(video.data.platform)} 上观看
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
         </a>
       </div>
+
+      <!-- Share Buttons -->
+      <div class="mt-12 pt-8 border-t border-[var(--border-color)]">
+        <ShareButtons
+          title={video.data.title}
+          url={canonicalURL}
+          description={video.data.description}
+        />
+      </div>
+
+      <!-- Navigation -->
+      <ContentNavigation
+        prev={prevVideo ? { slug: prevVideo.slug, data: { title: prevVideo.data.title } } : undefined}
+        next={nextVideo ? { slug: nextVideo.slug, data: { title: nextVideo.data.title } } : undefined}
+        basePath="/videos"
+        prevLabel="上一个视频"
+        nextLabel="下一个视频"
+      />
+
+      <!-- Related Videos -->
+      <RelatedVideos
+        currentSlug={video.slug}
+        platform={video.data.platform}
+        allVideos={sortedVideos}
+      />
     </div>
   </article>
 </BaseLayout>

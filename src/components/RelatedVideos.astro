@@ -1,0 +1,50 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import VideoCard from './VideoCard.astro';
+
+interface Props {
+  currentSlug: string;
+  platform: string;
+  allVideos: CollectionEntry<'videos'>[];
+}
+
+const { currentSlug, platform, allVideos } = Astro.props;
+
+// Calculate relevance score based on platform
+const scoredVideos = allVideos
+  .filter(video => video.slug !== currentSlug)
+  .map(video => {
+    let score = 0;
+
+    // Same platform gets higher score
+    if (video.data.platform === platform) score += 2;
+
+    return { video, score };
+  })
+  .sort((a, b) => {
+    // Sort by score first, then by date
+    if (b.score !== a.score) return b.score - a.score;
+    return b.video.data.date.valueOf() - a.video.data.date.valueOf();
+  })
+  .slice(0, 3)
+  .map(({ video }) => video);
+---
+
+{scoredVideos.length > 0 && (
+  <section class="related-videos mt-16 pt-12 border-t border-[var(--border-color)]">
+    <h2 class="text-2xl font-serif font-semibold mb-8 text-[var(--text-primary)]">
+      相关视频
+    </h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      {scoredVideos.map(video => (
+        <VideoCard
+          title={video.data.title}
+          slug={video.slug}
+          date={video.data.date}
+          platform={video.data.platform}
+          thumbnail={video.data.thumbnail}
+        />
+      ))}
+    </div>
+  </section>
+)}
