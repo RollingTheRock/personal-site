@@ -1,36 +1,62 @@
 ---
 ---
 
-<button
-  id="theme-toggle"
-  class="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-colors"
-  aria-label="切换主题"
->
-  <!-- Sun icon (for dark mode) -->
-  <svg id="sun-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="5"></circle>
-    <line x1="12" y1="1" x2="12" y2="3"></line>
-    <line x1="12" y1="21" x2="12" y2="23"></line>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-    <line x1="1" y1="12" x2="3" y2="12"></line>
-    <line x1="21" y1="12" x2="23" y2="12"></line>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-  </svg>
+<div class="flex items-center bg-[var(--bg-secondary)] rounded-lg p-1 border border-[var(--border-color)]">
+  <!-- Light Mode -->
+  <button
+    id="theme-light"
+    class="theme-btn p-1.5 rounded-md transition-all duration-200"
+    aria-label="亮色模式"
+    title="亮色模式"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </button>
 
-  <!-- Moon icon (for light mode) -->
-  <svg id="moon-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-  </svg>
-</button>
+  <!-- Dark Mode -->
+  <button
+    id="theme-dark"
+    class="theme-btn p-1.5 rounded-md transition-all duration-200"
+    aria-label="暗色模式"
+    title="暗色模式"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+  </button>
+
+  <!-- System Mode -->
+  <button
+    id="theme-system"
+    class="theme-btn p-1.5 rounded-md transition-all duration-200"
+    aria-label="跟随系统"
+    title="跟随系统"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+      <line x1="8" y1="21" x2="16" y2="21"></line>
+      <line x1="12" y1="17" x2="12" y2="21"></line>
+    </svg>
+  </button>
+</div>
 
 <script>
-  function getTheme() {
-    return localStorage.getItem('theme') || 'system';
+  type Theme = 'light' | 'dark' | 'system';
+
+  function getTheme(): Theme {
+    return (localStorage.getItem('theme') as Theme) || 'system';
   }
 
-  function setTheme(theme: string) {
+  function setTheme(theme: Theme) {
     localStorage.setItem('theme', theme);
     updateTheme();
   }
@@ -42,32 +68,38 @@
 
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
 
-    // Update icons
-    const sunIcon = document.getElementById('sun-icon');
-    const moonIcon = document.getElementById('moon-icon');
+    // Update button states
+    const lightBtn = document.getElementById('theme-light');
+    const darkBtn = document.getElementById('theme-dark');
+    const systemBtn = document.getElementById('theme-system');
 
-    if (sunIcon && moonIcon) {
-      if (isDark) {
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-      } else {
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
+    // Reset all buttons
+    [lightBtn, darkBtn, systemBtn].forEach(btn => {
+      if (btn) {
+        btn.classList.remove('bg-[var(--bg-primary)]', 'text-[var(--text-primary)]', 'shadow-sm');
+        btn.classList.add('text-[var(--text-muted)]');
       }
+    });
+
+    // Highlight active button
+    const activeBtn = theme === 'light' ? lightBtn : theme === 'dark' ? darkBtn : systemBtn;
+    if (activeBtn) {
+      activeBtn.classList.remove('text-[var(--text-muted)]');
+      activeBtn.classList.add('bg-[var(--bg-primary)]', 'text-[var(--text-primary)]', 'shadow-sm');
     }
   }
 
-  // Toggle theme
-  document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    const theme = getTheme();
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
-
-    setTheme(isDark ? 'light' : 'dark');
-  });
+  // Event listeners
+  document.getElementById('theme-light')?.addEventListener('click', () => setTheme('light'));
+  document.getElementById('theme-dark')?.addEventListener('click', () => setTheme('dark'));
+  document.getElementById('theme-system')?.addEventListener('click', () => setTheme('system'));
 
   // Listen for system theme changes
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (getTheme() === 'system') {
+      updateTheme();
+    }
+  });
 
   // Initial update
   updateTheme();

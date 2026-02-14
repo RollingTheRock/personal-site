@@ -1,14 +1,7 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-import { SITE_TITLE } from '../utils/constants';
-
-const navLinks = [
-  { href: '/', label: '首页' },
-  { href: '/blog', label: '博客' },
-  { href: '/projects', label: '项目' },
-  { href: '/videos', label: '视频' },
-  { href: '/about', label: '关于' },
-];
+import MobileMenu from './MobileMenu.astro';
+import { SITE_TITLE, NAV_LINKS } from '../utils/constants';
 
 const currentPath = Astro.url.pathname;
 ---
@@ -17,21 +10,21 @@ const currentPath = Astro.url.pathname;
   <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <!-- Logo -->
-      <a href="/" class="text-xl font-semibold font-serif tracking-tight">
+      <a href="/" class="text-xl font-semibold font-serif tracking-tight hover:opacity-80 transition-opacity">
         {SITE_TITLE}
       </a>
 
       <!-- Desktop Navigation -->
-      <nav class="hidden md:flex items-center space-x-8">
-        {navLinks.map(link => {
+      <nav class="hidden md:flex items-center space-x-1">
+        {NAV_LINKS.map(link => {
           const isActive = currentPath === link.href || currentPath.startsWith(`${link.href}/`);
           return (
             <a
               href={link.href}
-              class={`text-sm font-medium transition-colors ${
+              class={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'text-[var(--text-primary)]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  ? 'text-[var(--text-primary)] bg-[var(--bg-secondary)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
               }`}
             >
               {link.label}
@@ -40,46 +33,11 @@ const currentPath = Astro.url.pathname;
         })}
       </nav>
 
-      <!-- Theme Toggle -->
-      <div class="flex items-center space-x-4">
+      <!-- Right Side -->
+      <div class="flex items-center space-x-2">
         <ThemeToggle />
-
-        <!-- Mobile Menu Button -->
-        <button
-          id="mobile-menu-btn"
-          class="md:hidden p-2 text-[var(--text-primary)]"
-          aria-label="打开菜单"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
+        <MobileMenu currentPath={currentPath} />
       </div>
     </div>
   </div>
-
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-[var(--border-color)] bg-[var(--bg-primary)]">
-    <nav class="px-4 py-4 space-y-2">
-      {navLinks.map(link => (
-        <a
-          href={link.href}
-          class="block py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-        >
-          {link.label}
-        </a>
-      ))}
-    </nav>
-  </div>
 </header>
-
-<script>
-  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
-
-  mobileMenuBtn?.addEventListener('click', () => {
-    mobileMenu?.classList.toggle('hidden');
-  });
-</script>

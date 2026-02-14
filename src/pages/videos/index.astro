@@ -1,35 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
+import VideoCard from '../../components/VideoCard.astro';
 import { getCollection } from 'astro:content';
 
 const videos = await getCollection('videos');
 const sortedVideos = videos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date);
-}
-
-function getPlatformName(platform: string) {
-  return platform === 'bilibili' ? 'Bilibili' : 'YouTube';
-}
-
-function getEmbedUrl(video: typeof videos[0]) {
-  if (video.data.platform === 'bilibili') {
-    return `https://player.bilibili.com/player.html?bvid=${video.data.videoId}&page=1`;
-  }
-  return `https://www.youtube.com/embed/${video.data.videoId}`;
-}
 ---
 
 <BaseLayout title="视频" description="我的视频内容">
   <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
     <!-- Header -->
-    <div class="text-center mb-12">
+    <div class="text-center mb-12 page-transition">
       <h1 class="text-3xl md:text-4xl font-serif font-bold mb-4">视频</h1>
       <p class="text-[var(--text-secondary)] max-w-lg mx-auto">
         我的视频内容
@@ -37,40 +18,15 @@ function getEmbedUrl(video: typeof videos[0]) {
     </div>
 
     <!-- Videos Grid -->
-    <div class="grid md:grid-cols-2 gap-8">
+    <div class="grid md:grid-cols-2 gap-8 page-transition">
       {sortedVideos.map(video => (
-        <article class="group">
-          <a href={`/videos/${video.slug}`} class="block">
-            <!-- Thumbnail with Play Button -->
-            <div class="relative aspect-video overflow-hidden rounded-xl bg-[var(--bg-secondary)] img-hover">
-              {video.data.thumbnail ? (
-                <img
-                  src={video.data.thumbnail}
-                  alt={video.data.title}
-                  class="w-full h-full object-cover"
-                />
-              ) : (
-                <ImagePlaceholder alt={video.data.title} aspectRatio="16/9" class="w-full h-full" />
-              )}
-              <div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-black ml-1">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-4">
-              <h2 class="text-lg font-semibold group-hover:text-[var(--text-secondary)] transition-colors">
-                {video.data.title}
-              </h2>
-              <p class="text-sm text-[var(--text-muted)] mt-1">
-                {formatDate(video.data.date)} · {getPlatformName(video.data.platform)}
-              </p>
-            </div>
-          </a>
-        </article>
+        <VideoCard
+          title={video.data.title}
+          slug={video.slug}
+          date={video.data.date}
+          platform={video.data.platform}
+          thumbnail={video.data.thumbnail}
+        />
       ))}
     </div>
 
