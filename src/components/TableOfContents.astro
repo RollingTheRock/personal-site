@@ -23,7 +23,7 @@ const tocHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
         <h3 class="text-sm font-semibold text-[var(--text-primary)] mb-4 uppercase tracking-wider">
           目录
         </h3>
-        <nav class="toc-nav space-y-1">
+        <nav class="toc-nav space-y-1" aria-label="文章目录">
           {tocHeadings.map(heading => (
             <a
               href={`#${heading.slug}`}
@@ -31,6 +31,7 @@ const tocHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
                 heading.depth === 3 ? 'pl-4 text-[var(--text-muted)]' : 'text-[var(--text-secondary)]'
               } hover:text-[var(--text-primary)]`}
               data-heading-id={heading.slug}
+              aria-current="false"
             >
               {heading.text}
             </a>
@@ -106,7 +107,15 @@ const tocHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
 
 <script>
   // Highlight current heading on scroll
+  let observer: IntersectionObserver | null = null;
+
   function initTOC() {
+    // Clean up previous observer
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+
     const headings = document.querySelectorAll('article h2[id], article h3[id]');
     const tocLinks = document.querySelectorAll('.toc-link');
 
@@ -114,26 +123,31 @@ const tocHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
 
     const observerOptions = {
       root: null,
+      // Header offset (80px) + some buffer to trigger early
       rootMargin: '-80px 0px -60% 0px',
       threshold: 0,
     };
 
-    const observer = new IntersectionObserver((entries) => {
+    observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Remove active class from all links
-          tocLinks.forEach(link => link.classList.remove('active'));
+          // Remove active class and aria-current from all links
+          tocLinks.forEach(link => {
+            link.classList.remove('active');
+            link.setAttribute('aria-current', 'false');
+          });
 
-          // Add active class to current heading's link
+          // Add active class and aria-current to current heading's link
           const activeLink = document.querySelector(`.toc-link[data-heading-id="${entry.target.id}"]`);
           if (activeLink) {
             activeLink.classList.add('active');
+            activeLink.setAttribute('aria-current', 'true');
           }
         }
       });
     }, observerOptions);
 
-    headings.forEach(heading => observer.observe(heading));
+    headings.forEach(heading => observer?.observe(heading));
 
     // Smooth scroll for TOC links
     tocLinks.forEach(link => {
@@ -158,4 +172,12 @@ const tocHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
 
   // Re-initialize after Astro page transitions
   document.addEventListener('astro:page-load', initTOC);
+
+  // Cleanup before page transitions
+  document.addEventListener('astro:before-swap', () => {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+  });
 </script>

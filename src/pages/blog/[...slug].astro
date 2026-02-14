@@ -95,12 +95,7 @@ const canonicalURL = new URL(`/blog/${post.slug}`, Astro.site || 'https://amiwrr
       )}
     </div>
 
-    <!-- Mobile TOC -->
-    <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">
-      <TableOfContents headings={headings} />
-    </div>
-
-    <!-- Main Content with Desktop TOC -->
+  <!-- Main Content with Desktop TOC -->
     <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex gap-12">
         <!-- Content -->
@@ -145,6 +140,7 @@ const canonicalURL = new URL(`/blog/${post.slug}`, Astro.site || 'https://amiwrr
             currentSlug={post.slug}
             categories={post.data.categories}
             tags={post.data.tags}
+            allPosts={sortedPosts}
           />
 
           <!-- Comments -->

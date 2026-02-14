@@ -16,7 +16,7 @@ const { prev, next } = Astro.props;
 
 {(prev || next) && (
   <nav class="post-navigation grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 pt-12 border-t border-[var(--border-color)]">
-    {prev ? (
+    {prev && (
       <a
         href={`/blog/${prev.slug}`}
         class="group flex flex-col p-4 -mx-4 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors duration-200"
@@ -31,14 +31,12 @@ const { prev, next } = Astro.props;
           {prev.data.title}
         </span>
       </a>
-    ) : (
-      <div />
     )}
 
-    {next ? (
+    {next && (
       <a
         href={`/blog/${next.slug}`}
-        class="group flex flex-col items-end p-4 -mx-4 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors duration-200 text-right"
+        class="group flex flex-col items-end p-4 -mx-4 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors duration-200 text-right md:col-start-2"
       >
         <span class="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-2 flex items-center gap-1">
           下一篇
@@ -50,8 +48,6 @@ const { prev, next } = Astro.props;
           {next.data.title}
         </span>
       </a>
-    ) : (
-      <div />
     )}
   </nav>
 )}
