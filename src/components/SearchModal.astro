@@ -1,0 +1,401 @@
+---
+// Search Modal Component - Client-side search using Fuse.js
+---
+
+<!-- Search Trigger Button -->
+<button
+  id="search-trigger"
+  class="flex items-center gap-2 px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+  aria-label="搜索"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <path d="m21 21-4.35-4.35"></path>
+  </svg>
+  <span class="hidden md:inline">搜索...</span>
+  <kbd class="hidden md:inline-flex items-center px-1.5 py-0.5 text-xs font-mono bg-[var(--bg-tertiary)] text-[var(--text-muted)] rounded">
+    ⌘K
+  </kbd>
+</button>
+
+<!-- Search Modal -->
+<div
+  id="search-modal"
+  class="fixed inset-0 z-50 hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="搜索"
+>
+  <!-- Backdrop -->
+  <div id="search-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity opacity-0"></div>
+
+  <!-- Modal Content -->
+  <div class="relative mx-auto mt-16 md:mt-24 max-w-2xl px-4">
+    <div
+      id="search-container"
+      class="bg-[var(--bg-primary)] rounded-xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-200"
+    >
+      <!-- Search Input -->
+      <div class="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-color)]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--text-muted)]">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="搜索文章..."
+          class="flex-1 bg-transparent text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none text-base"
+          autocomplete="off"
+        />
+        <kbd class="hidden sm:inline-flex items-center px-2 py-1 text-xs font-mono bg-[var(--bg-tertiary)] text-[var(--text-muted)] rounded">
+          ESC
+        </kbd>
+      </div>
+
+      <!-- Search Results -->
+      <div id="search-results" class="max-h-[60vh] overflow-y-auto">
+        <!-- Loading State -->
+        <div id="search-loading" class="hidden py-8 text-center text-[var(--text-muted)]">
+          <svg class="animate-spin inline-block w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="mt-2 text-sm">加载中...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="search-empty" class="hidden py-8 text-center text-[var(--text-muted)]">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3 opacity-50">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <p class="text-sm">输入关键词搜索文章</p>
+        </div>
+
+        <!-- No Results -->
+        <div id="search-no-results" class="hidden py-8 text-center text-[var(--text-muted)]">
+          <p class="text-sm">未找到相关文章</p>
+          <p class="text-xs mt-1">尝试使用不同的关键词</p>
+        </div>
+
+        <!-- Results List -->
+        <div id="search-results-list" class="hidden py-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import Fuse from 'fuse.js';
+
+  // DOM Elements
+  const trigger = document.getElementById('search-trigger');
+  const modal = document.getElementById('search-modal');
+  const backdrop = document.getElementById('search-backdrop');
+  const container = document.getElementById('search-container');
+  const input = document.getElementById('search-input') as HTMLInputElement;
+  const resultsContainer = document.getElementById('search-results');
+  const loadingEl = document.getElementById('search-loading');
+  const emptyEl = document.getElementById('search-empty');
+  const noResultsEl = document.getElementById('search-no-results');
+  const resultsListEl = document.getElementById('search-results-list');
+
+  // State
+  let fuse: Fuse<any> | null = null;
+  let searchIndex: any[] = [];
+  let selectedIndex = -1;
+  let isOpen = false;
+
+  // Fuse.js options
+  const fuseOptions = {
+    keys: [
+      { name: 'title', weight: 0.4 },
+      { name: 'description', weight: 0.3 },
+      { name: 'content', weight: 0.2 },
+      { name: 'tags', weight: 0.1 },
+    ],
+    threshold: 0.3,
+    includeMatches: true,
+    includeScore: true,
+    minMatchCharLength: 2,
+  };
+
+  // Load search index
+  async function loadSearchIndex() {
+    try {
+      showLoading();
+      const response = await fetch('/search-index.json');
+      if (!response.ok) throw new Error('Failed to load search index');
+      searchIndex = await response.json();
+      fuse = new Fuse(searchIndex, fuseOptions);
+      showEmpty();
+    } catch (error) {
+      console.error('Failed to load search index:', error);
+      showNoResults();
+    }
+  }
+
+  // Open modal
+  function openModal() {
+    if (isOpen) return;
+    isOpen = true;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Animation
+    requestAnimationFrame(() => {
+      backdrop.classList.remove('opacity-0');
+      container.classList.remove('scale-95', 'opacity-0');
+      container.classList.add('scale-100', 'opacity-100');
+    });
+
+    // Load index if not loaded
+    if (!fuse) {
+      loadSearchIndex();
+    }
+
+    // Focus input after animation
+    setTimeout(() => input?.focus(), 100);
+  }
+
+  // Close modal
+  function closeModal() {
+    if (!isOpen) return;
+    isOpen = false;
+
+    // Animation
+    backdrop.classList.add('opacity-0');
+    container.classList.remove('scale-100', 'opacity-100');
+    container.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+      input.value = '';
+      selectedIndex = -1;
+      showEmpty();
+    }, 200);
+  }
+
+  // Show states
+  function showLoading() {
+    loadingEl?.classList.remove('hidden');
+    emptyEl?.classList.add('hidden');
+    noResultsEl?.classList.add('hidden');
+    resultsListEl?.classList.add('hidden');
+  }
+
+  function showEmpty() {
+    loadingEl?.classList.add('hidden');
+    emptyEl?.classList.remove('hidden');
+    noResultsEl?.classList.add('hidden');
+    resultsListEl?.classList.add('hidden');
+  }
+
+  function showNoResults() {
+    loadingEl?.classList.add('hidden');
+    emptyEl?.classList.add('hidden');
+    noResultsEl?.classList.remove('hidden');
+    resultsListEl?.classList.add('hidden');
+  }
+
+  function showResults() {
+    loadingEl?.classList.add('hidden');
+    emptyEl?.classList.add('hidden');
+    noResultsEl?.classList.add('hidden');
+    resultsListEl?.classList.remove('hidden');
+  }
+
+  // Format date
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(date);
+  }
+
+  // Highlight matched text
+  function highlightText(text: string, matches: any[]): string {
+    if (!matches || matches.length === 0) return text;
+
+    let highlighted = '';
+    let lastIndex = 0;
+
+    // Sort matches by index
+    const sortedMatches = [...matches].sort((a, b) => a[0] - b[0]);
+
+    for (const [start, end] of sortedMatches) {
+      highlighted += text.slice(lastIndex, start);
+      highlighted += `<mark class="bg-yellow-200 dark:bg-yellow-900 text-inherit rounded px-0.5">${text.slice(start, end + 1)}</mark>`;
+      lastIndex = end + 1;
+    }
+
+    highlighted += text.slice(lastIndex);
+    return highlighted;
+  }
+
+  // Render results
+  function renderResults(results: any[]) {
+    if (!resultsListEl) return;
+
+    if (results.length === 0) {
+      showNoResults();
+      return;
+    }
+
+    selectedIndex = -1;
+    showResults();
+
+    resultsListEl.innerHTML = results.map((result, index) => {
+      const item = result.item;
+      const matches = result.matches || [];
+
+      // Find matches for different fields
+      const titleMatch = matches.find((m: any) => m.key === 'title');
+      const descMatch = matches.find((m: any) => m.key === 'description');
+
+      const title = titleMatch
+        ? highlightText(item.title, titleMatch.indices)
+        : item.title;
+      const description = descMatch
+        ? highlightText(item.description, descMatch.indices)
+        : item.description;
+
+      return `
+        <a
+          href="/blog/${item.slug}"
+          class="search-result block px-4 py-3 hover:bg-[var(--bg-secondary)] transition-colors ${index === 0 ? 'bg-[var(--bg-secondary)]/50' : ''}"
+          data-index="${index}"
+        >
+          <h3 class="font-medium text-[var(--text-primary)] mb-1">${title}</h3>
+          <p class="text-sm text-[var(--text-secondary)] line-clamp-2">${description}</p>
+          <div class="flex items-center gap-2 mt-2 text-xs text-[var(--text-muted)]">
+            <span>${formatDate(item.date)}</span>
+            ${item.categories.length > 0 ? `
+              <span>·</span>
+              <span>${item.categories[0]}</span>
+            ` : ''}
+          </div>
+        </a>
+      `;
+    }).join('');
+
+    // Add click handlers
+    resultsListEl.querySelectorAll('.search-result').forEach((el, index) => {
+      el.addEventListener('click', () => {
+        closeModal();
+      });
+      el.addEventListener('mouseenter', () => {
+        selectedIndex = index;
+        updateSelection();
+      });
+    });
+  }
+
+  // Update selection highlight
+  function updateSelection() {
+    const items = resultsListEl?.querySelectorAll('.search-result');
+    items?.forEach((item, index) => {
+      if (index === selectedIndex) {
+        item.classList.add('bg-[var(--bg-secondary)]');
+      } else {
+        item.classList.remove('bg-[var(--bg-secondary)]');
+      }
+    });
+  }
+
+  // Handle search input
+  function handleSearch(query: string) {
+    if (!fuse) return;
+
+    if (query.trim() === '') {
+      showEmpty();
+      return;
+    }
+
+    const results = fuse.search(query);
+    renderResults(results);
+  }
+
+  // Handle keyboard navigation
+  function handleKeyDown(e: KeyboardEvent) {
+    // Open modal with Cmd/Ctrl + K
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      openModal();
+      return;
+    }
+
+    if (!isOpen) return;
+
+    const items = resultsListEl?.querySelectorAll('.search-result');
+    const itemCount = items?.length || 0;
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        closeModal();
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        if (itemCount > 0) {
+          selectedIndex = (selectedIndex + 1) % itemCount;
+          updateSelection();
+          items?.[selectedIndex]?.scrollIntoView({ block: 'nearest' });
+        }
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        if (itemCount > 0) {
+          selectedIndex = selectedIndex <= 0 ? itemCount - 1 : selectedIndex - 1;
+          updateSelection();
+          items?.[selectedIndex]?.scrollIntoView({ block: 'nearest' });
+        }
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0 && items?.[selectedIndex]) {
+          (items[selectedIndex] as HTMLAnchorElement).click();
+        } else if (itemCount > 0) {
+          (items[0] as HTMLAnchorElement).click();
+        }
+        break;
+    }
+  }
+
+  // Event listeners
+  trigger?.addEventListener('click', openModal);
+  backdrop?.addEventListener('click', closeModal);
+
+  input?.addEventListener('input', (e) => {
+    handleSearch((e.target as HTMLInputElement).value);
+  });
+
+  document.addEventListener('keydown', handleKeyDown);
+
+  // Cleanup on page navigation (Astro View Transitions)
+  document.addEventListener('astro:before-swap', () => {
+    document.removeEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = '';
+  });
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    // Re-select elements as they may have been replaced
+    const newTrigger = document.getElementById('search-trigger');
+    const newModal = document.getElementById('search-modal');
+    const newBackdrop = document.getElementById('search-backdrop');
+    const newInput = document.getElementById('search-input') as HTMLInputElement;
+
+    newTrigger?.addEventListener('click', openModal);
+    newBackdrop?.addEventListener('click', closeModal);
+    newInput?.addEventListener('input', (e) => {
+      handleSearch((e.target as HTMLInputElement).value);
+    });
+
+    document.addEventListener('keydown', handleKeyDown);
+  });
+</script>

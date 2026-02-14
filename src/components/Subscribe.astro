@@ -1,46 +1,63 @@
 ---
 interface Props {
   compact?: boolean;
+  showPrivacy?: boolean;
 }
 
-const { compact = false } = Astro.props;
+const { compact = false, showPrivacy = false } = Astro.props;
 const BUTTONDOWN_URL = 'https://buttondown.email/api/emails/embed-subscribe/rollingtherock';
 ---
 
 {compact ? (
   <!-- Compact version for footer -->
-  <form
-    action={BUTTONDOWN_URL}
-    method="post"
-    target="_blank"
-    class="flex gap-2"
-  >
-    <input
-      type="email"
-      name="email"
-      placeholder="your@email.com"
-      required
-      class="flex-1 px-3 py-2 text-sm bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:border-[var(--text-primary)] transition-colors"
-    />
-    <button
-      type="submit"
-      class="px-4 py-2 text-sm font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity"
+  <div class="subscribe-container" data-compact="true">
+    <form
+      class="subscribe-form flex gap-2"
+      data-buttondown-url={BUTTONDOWN_URL}
     >
-      订阅
-    </button>
-  </form>
+      <input
+        type="email"
+        name="email"
+        placeholder="your@email.com"
+        required
+        class="flex-1 px-3 py-2 text-sm bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:border-[var(--text-primary)] transition-colors"
+      />
+      <button
+        type="submit"
+        class="subscribe-btn px-4 py-2 text-sm font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span class="btn-text">订阅</span>
+        <span class="btn-loading hidden">...</span>
+      </button>
+    </form>
+
+    {showPrivacy && (
+      <p class="text-xs text-[var(--text-muted)] mt-2">
+        订阅即表示你同意我们的 <a href="/privacy" class="underline hover:text-[var(--text-primary)]">隐私政策</a>
+      </p>
+    )}
+
+    <div class="subscribe-status hidden mt-2">
+      <p class="success-message hidden text-sm text-green-600 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        订阅成功！请检查邮箱确认。
+      </p>
+      <p class="error-message hidden text-sm text-red-600 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        订阅失败，请稍后重试。
+      </p>
+    </div>
+  </div>
 ) : (
   <!-- Full version for dedicated section -->
-  <div class="bg-[var(--bg-secondary)] rounded-2xl p-8 md:p-12">
+  <div class="subscribe-container bg-[var(--bg-secondary)] rounded-2xl p-8 md:p-12" data-compact="false">
     <h3 class="text-2xl font-serif font-semibold mb-3">订阅更新</h3>
     <p class="text-[var(--text-secondary)] mb-6 max-w-md">
       获取最新的技术文章、项目更新和思考分享。没有垃圾邮件，随时取消订阅。
     </p>
     <form
-      action={BUTTONDOWN_URL}
-      method="post"
-      target="_blank"
-      class="flex flex-col sm:flex-row gap-3 max-w-md"
+      class="subscribe-form flex flex-col sm:flex-row gap-3 max-w-md"
+      data-buttondown-url={BUTTONDOWN_URL}
     >
       <input
         type="email"
@@ -51,13 +68,112 @@ const BUTTONDOWN_URL = 'https://buttondown.email/api/emails/embed-subscribe/roll
       />
       <button
         type="submit"
-        class="px-6 py-3 font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity"
+        class="subscribe-btn px-6 py-3 font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        订阅
+        <span class="btn-text">订阅</span>
+        <span class="btn-loading hidden">...</span>
       </button>
     </form>
+
+    {showPrivacy && (
+      <p class="text-xs text-[var(--text-muted)] mt-4">
+        订阅即表示你同意我们的 <a href="/privacy" class="underline hover:text-[var(--text-primary)]">隐私政策</a>
+      </p>
+    )}
+
+    <div class="subscribe-status hidden mt-4">
+      <p class="success-message hidden text-sm text-green-600 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        订阅成功！请检查邮箱确认。
+      </p>
+      <p class="error-message hidden text-sm text-red-600 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        订阅失败，请稍后重试。
+      </p>
+    </div>
+
     <p class="text-xs text-[var(--text-muted)] mt-4">
       Powered by <a href="https://buttondown.email" target="_blank" rel="noopener noreferrer" class="underline">Buttondown</a>
     </p>
   </div>
 )}
+
+<script>
+  // Handle subscription form submission
+  function initSubscribeForms() {
+    const containers = document.querySelectorAll('.subscribe-container');
+
+    containers.forEach(container => {
+      const form = container.querySelector('.subscribe-form');
+      const btn = container.querySelector('.subscribe-btn');
+      const btnText = container.querySelector('.btn-text');
+      const btnLoading = container.querySelector('.btn-loading');
+      const statusDiv = container.querySelector('.subscribe-status');
+      const successMsg = container.querySelector('.success-message');
+      const errorMsg = container.querySelector('.error-message');
+
+      if (!form || !btn) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const email = formData.get('email');
+        const buttondownUrl = form.getAttribute('data-buttondown-url');
+
+        if (!email || !buttondownUrl) return;
+
+        // Show loading state
+        btn.disabled = true;
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+        statusDiv.classList.add('hidden');
+        successMsg.classList.add('hidden');
+        errorMsg.classList.add('hidden');
+
+        try {
+          const response = await fetch(buttondownUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ email: email.toString() }),
+          });
+
+          if (response.ok) {
+            // Show success message
+            statusDiv.classList.remove('hidden');
+            successMsg.classList.remove('hidden');
+            form.reset();
+
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+              statusDiv.classList.add('hidden');
+              successMsg.classList.add('hidden');
+            }, 5000);
+          } else {
+            throw new Error('Subscription failed');
+          }
+        } catch (err) {
+          // Show error message
+          statusDiv.classList.remove('hidden');
+          errorMsg.classList.remove('hidden');
+
+          // Hide error message after 5 seconds
+          setTimeout(() => {
+            statusDiv.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+          }, 5000);
+        } finally {
+          // Reset button state
+          btn.disabled = false;
+          btnText.classList.remove('hidden');
+          btnLoading.classList.add('hidden');
+        }
+      });
+    });
+  }
+
+  initSubscribeForms();
+  document.addEventListener('astro:page-load', initSubscribeForms);
+</script>

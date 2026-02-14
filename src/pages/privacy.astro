@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR } from '../utils/constants';
+
+const title = '隐私政策';
+const description = '了解我们如何收集、使用和保护您的个人信息';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <!-- Header -->
+    <header class="text-center mb-16">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold mb-4">{title}</h1>
+      <p class="text-[var(--text-secondary)]">{description}</p>
+    </header>
+
+    <!-- Content -->
+    <article class="prose prose-lg max-w-none text-[var(--text-secondary)] leading-relaxed space-y-8">
+      <!-- Introduction -->
+      <section>
+        <p>
+          本隐私政策说明了我们如何收集、使用和保护您的个人信息。使用我们的服务即表示您同意本隐私政策的条款。
+        </p>
+      </section>
+
+      <!-- Information Collection -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">收集的信息</h2>
+        <p>我们仅收集以下类型的信息：</p>
+        <ul class="list-disc pl-6 space-y-2 mt-2">
+          <li><strong>邮箱地址</strong>：当您订阅邮件更新时，我们需要您的邮箱地址来发送博客文章、项目更新和其他内容。</li>
+          <li><strong>匿名使用数据</strong>：我们可能会收集匿名的网站访问统计信息，用于改进网站体验。</li>
+        </ul>
+        <p class="mt-4">
+          我们<strong>不会</strong>收集：姓名、地址、电话号码、支付信息或任何其他个人身份信息。
+        </p>
+      </section>
+
+      <!-- Information Usage -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">信息使用</h2>
+        <p>我们使用收集的信息用于以下目的：</p>
+        <ul class="list-disc pl-6 space-y-2 mt-2">
+          <li>发送您订阅的博客更新和技术文章</li>
+          <li>通知您新项目的发布</li>
+          <li>分享思考和行业见解</li>
+          <li>改进网站内容和用户体验</li>
+        </ul>
+        <p class="mt-4">
+          我们<strong>不会</strong>：将您的信息出售给第三方、用于广告目的、或在未经您同意的情况下分享您的信息。
+        </p>
+      </section>
+
+      <!-- Storage and Security -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">存储和安全</h2>
+        <p>
+          您的邮箱地址存储在 <a href="https://buttondown.email" target="_blank" rel="noopener noreferrer" class="text-[var(--text-primary)] underline">Buttondown</a> 服务中，这是一家专业的邮件订阅服务提供商。Buttondown 采用行业标准的安全措施来保护您的数据。
+        </p>
+        <p class="mt-2">
+          我们采取合理的预防措施来保护您的信息免受未经授权的访问、使用或泄露。但请注意，互联网传输无法保证100%安全。
+        </p>
+      </section>
+
+      <!-- Unsubscribe -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">取消订阅</h2>
+        <p>
+          您可以随时取消订阅我们的邮件：
+        </p>
+        <ul class="list-disc pl-6 space-y-2 mt-2">
+          <li>每封邮件底部都包含一个"取消订阅"链接，点击即可取消订阅。</li>
+          <li>取消订阅后，您将不再收到任何邮件更新。</li>
+          <li>您的邮箱地址将在30天内从我们的系统中完全删除。</li>
+        </ul>
+      </section>
+
+      <!-- Third-Party Services -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">第三方服务</h2>
+        <p>我们使用以下第三方服务：</p>
+        <ul class="list-disc pl-6 space-y-2 mt-2">
+          <li>
+            <strong>Buttondown</strong>：用于邮件订阅和发送服务。请参考 <a href="https://buttondown.email/privacy" target="_blank" rel="noopener noreferrer" class="text-[var(--text-primary)] underline">Buttondown 隐私政策</a> 了解更多信息。
+          </li>
+          <li>
+            <strong>GitHub Pages</strong>：用于网站托管。
+          </li>
+        </ul>
+      </section>
+
+      <!-- Cookies -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">Cookie 使用</h2>
+        <p>
+          我们的网站使用 Cookie 来改善用户体验，包括：
+        </p>
+        <ul class="list-disc pl-6 space-y-2 mt-2">
+          <li><strong>主题偏好</strong>：记住您选择的深色/浅色模式</li>
+          <li><strong>匿名分析</strong>：了解网站流量和使用模式</li>
+        </ul>
+        <p class="mt-2">
+          您可以在浏览器设置中禁用 Cookie，但这可能会影响网站的某些功能。
+        </p>
+      </section>
+
+      <!-- Changes -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">政策变更</h2>
+        <p>
+          我们可能会不时更新本隐私政策。任何变更将在本页面发布，并在页面顶部标注最后更新日期。重大变更可能会通过邮件通知订阅用户。
+        </p>
+      </section>
+
+      <!-- Contact -->
+      <section>
+        <h2 class="text-xl font-serif font-semibold text-[var(--text-primary)] mb-4">联系我们</h2>
+        <p>
+          如果您对本隐私政策有任何问题或疑虑，请通过以下方式联系我们：
+        </p>
+        <ul class="list-disc pl-6 space-y-2 mt-2">
+          <li>邮箱：<a href={`mailto:${AUTHOR.email}`} class="text-[var(--text-primary)] underline">{AUTHOR.email}</a></li>
+          <li>GitHub：<a href={`https://github.com/RollingTheRock`} target="_blank" rel="noopener noreferrer" class="text-[var(--text-primary)] underline">@RollingTheRock</a></li>
+        </ul>
+      </section>
+
+      <!-- Last Updated -->
+      <footer class="pt-8 border-t border-[var(--border-color)]">
+        <p class="text-sm text-[var(--text-muted)]">
+          最后更新日期：2026年2月14日
+        </p>
+      </footer>
+    </article>
+  </div>
+</BaseLayout>
