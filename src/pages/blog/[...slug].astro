@@ -3,6 +3,11 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
 import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+import PostNavigation from '../../components/PostNavigation.astro';
+import { calculateReadingTime } from '../../utils/readingTime';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -17,7 +22,17 @@ type Props = {
 };
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
+
+// Calculate reading time
+const readingTime = calculateReadingTime(post.body);
+
+// Get prev/next posts
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const currentIndex = sortedPosts.findIndex(p => p.slug === post.slug);
+const prevPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : undefined;
+const nextPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : undefined;
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat('zh-CN', {
@@ -26,6 +41,8 @@ function formatDate(date: Date) {
     day: 'numeric',
   }).format(date);
 }
+
+const canonicalURL = new URL(`/blog/${post.slug}`, Astro.site || 'https://amiwrr.blog').toString();
 ---
 
 <BaseLayout
@@ -60,6 +77,8 @@ function formatDate(date: Date) {
 
       <div class="flex items-center justify-center gap-4 text-sm text-[var(--text-muted)]">
         <span>{formatDate(post.data.date)}</span>
+        <span>·</span>
+        <span>{readingTime.text}</span>
       </div>
     </header>
 
@@ -76,32 +95,69 @@ function formatDate(date: Date) {
       )}
     </div>
 
-    <!-- Content -->
+    <!-- Mobile TOC -->
     <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="article-content">
-        <Content />
-      </div>
+      <TableOfContents headings={headings} />
     </div>
 
-    <!-- Tags -->
-    {post.data.tags.length > 0 && (
-      <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div class="flex flex-wrap gap-2">
-          {post.data.tags.map(tag => (
-            <a
-              href={`/blog/tags/${tag.toLowerCase()}`}
-              class="px-3 py-1 bg-[var(--bg-secondary)] rounded-full text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              #{tag}
-            </a>
-          ))}
+    <!-- Main Content with Desktop TOC -->
+    <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex gap-12">
+        <!-- Content -->
+        <div class="flex-1 max-w-article">
+          <div class="article-content">
+            <Content />
+          </div>
+
+          <!-- Tags -->
+          {post.data.tags.length > 0 && (
+            <div class="mt-12 pt-8 border-t border-[var(--border-color)]">
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map(tag => (
+                  <a
+                    href={`/blog/tags/${tag.toLowerCase()}`}
+                    class="px-3 py-1 bg-[var(--bg-secondary)] rounded-full text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                  >
+                    #{tag}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Share Buttons -->
+          <div class="mt-8 pt-8 border-t border-[var(--border-color)]">
+            <ShareButtons
+              title={post.data.title}
+              url={canonicalURL}
+              description={post.data.description}
+            />
+          </div>
+
+          <!-- Post Navigation -->
+          <PostNavigation
+            prev={prevPost ? { slug: prevPost.slug, data: { title: prevPost.data.title } } : undefined}
+            next={nextPost ? { slug: nextPost.slug, data: { title: nextPost.data.title } } : undefined}
+          />
+
+          <!-- Related Posts -->
+          <RelatedPosts
+            currentSlug={post.slug}
+            categories={post.data.categories}
+            tags={post.data.tags}
+          />
+
+          <!-- Comments -->
+          <div class="mt-16 pt-12 border-t border-[var(--border-color)]">
+            <Comments />
+          </div>
+        </div>
+
+        <!-- Desktop TOC Sidebar -->
+        <div class="w-64 flex-shrink-0">
+          <TableOfContents headings={headings} />
         </div>
       </div>
-    )}
-
-    <!-- Comments -->
-    <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-      <Comments />
     </div>
   </article>
 </BaseLayout>

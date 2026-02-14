@@ -1,0 +1,161 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+// 只显示 h2 和 h3
+const tocHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
+---
+
+{tocHeadings.length > 0 && (
+  <>
+    {/* Desktop TOC - Fixed sidebar */}
+    <div class="hidden xl:block">
+      <div class="toc-sidebar sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
+        <h3 class="text-sm font-semibold text-[var(--text-primary)] mb-4 uppercase tracking-wider">
+          目录
+        </h3>
+        <nav class="toc-nav space-y-1">
+          {tocHeadings.map(heading => (
+            <a
+              href={`#${heading.slug}`}
+              class={`toc-link block text-sm transition-colors duration-200 ${
+                heading.depth === 3 ? 'pl-4 text-[var(--text-muted)]' : 'text-[var(--text-secondary)]'
+              } hover:text-[var(--text-primary)]`}
+              data-heading-id={heading.slug}
+            >
+              {heading.text}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
+
+    {/* Mobile TOC - Collapsible */}
+    <div class="xl:hidden mb-8">
+      <details class="toc-mobile group">
+        <summary class="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-lg cursor-pointer list-none">
+          <span class="font-medium text-[var(--text-primary)]">文章目录</span>
+          <svg
+            class="w-5 h-5 text-[var(--text-muted)] transition-transform duration-200 group-open:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+        <nav class="p-4 space-y-2 border-t border-[var(--border-color)]">
+          {tocHeadings.map(heading => (
+            <a
+              href={`#${heading.slug}`}
+              class={`block text-sm transition-colors duration-200 ${
+                heading.depth === 3 ? 'pl-4 text-[var(--text-muted)]' : 'text-[var(--text-secondary)]'
+              } hover:text-[var(--text-primary)]`}
+            >
+              {heading.text}
+            </a>
+          ))}
+        </nav>
+      </details>
+    </div>
+  </>
+)}
+
+<style>
+  .toc-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+  }
+
+  .toc-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .toc-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toc-sidebar::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
+  }
+
+  .toc-link {
+    line-height: 1.6;
+    padding: 0.25rem 0;
+  }
+
+  .toc-link.active {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .toc-mobile > summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
+
+<script>
+  // Highlight current heading on scroll
+  function initTOC() {
+    const headings = document.querySelectorAll('article h2[id], article h3[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    if (!headings.length || !tocLinks.length) return;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-80px 0px -60% 0px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Remove active class from all links
+          tocLinks.forEach(link => link.classList.remove('active'));
+
+          // Add active class to current heading's link
+          const activeLink = document.querySelector(`.toc-link[data-heading-id="${entry.target.id}"]`);
+          if (activeLink) {
+            activeLink.classList.add('active');
+          }
+        }
+      });
+    }, observerOptions);
+
+    headings.forEach(heading => observer.observe(heading));
+
+    // Smooth scroll for TOC links
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href')?.slice(1);
+        const target = document.getElementById(targetId || '');
+        if (target) {
+          const offset = 80; // Header height + padding
+          const targetPosition = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth',
+          });
+        }
+      });
+    });
+  }
+
+  // Initialize on page load
+  initTOC();
+
+  // Re-initialize after Astro page transitions
+  document.addEventListener('astro:page-load', initTOC);
+</script>

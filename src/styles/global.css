@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
 @layer base {
   :root {
@@ -241,4 +241,34 @@
   .fade-in-delay-1 { animation: fadeIn 0.4s ease-out 0.1s both; }
   .fade-in-delay-2 { animation: fadeIn 0.4s ease-out 0.2s both; }
   .fade-in-delay-3 { animation: fadeIn 0.4s ease-out 0.3s both; }
+
+  /* 最大宽度容器 */
+  .max-w-article {
+    max-width: 680px;
+  }
+
+  .max-w-medium {
+    max-width: 900px;
+  }
+
+  .max-w-wide {
+    max-width: 1100px;
+  }
+
+  /* 文章标题锚点链接 */
+  .article-content h2[id],
+  .article-content h3[id] {
+    scroll-margin-top: 100px;
+  }
+
+  /* 评论区域 */
+  .comments-section {
+    margin-top: 3rem;
+  }
+
+  /* 目录激活状态 */
+  .toc-link.active {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
 }

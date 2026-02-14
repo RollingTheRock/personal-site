@@ -1,31 +1,55 @@
 ---
 import { GISCUS_CONFIG } from '../utils/constants';
+
+const isConfigured = GISCUS_CONFIG.repoId && GISCUS_CONFIG.categoryId;
 ---
 
-<div class="border-t border-[var(--border-color)] pt-12">
+<div class="comments-section">
   <h3 class="text-lg font-semibold mb-6">评论</h3>
 
-  <script
-    src="https://giscus.app/client.js"
-    data-repo={GISCUS_CONFIG.repo}
-    data-repo-id={GISCUS_CONFIG.repoId}
-    data-category={GISCUS_CONFIG.category}
-    data-category-id={GISCUS_CONFIG.categoryId}
-    data-mapping={GISCUS_CONFIG.mapping}
-    data-strict="0"
-    data-reactions-enabled={GISCUS_CONFIG.reactionsEnabled}
-    data-emit-metadata={GISCUS_CONFIG.emitMetadata}
-    data-input-position={GISCUS_CONFIG.inputPosition}
-    data-theme="preferred_color_scheme"
-    data-lang={GISCUS_CONFIG.lang}
-    data-loading="lazy"
-    crossorigin="anonymous"
-    async
-  ></script>
+  {isConfigured ? (
+    <script
+      src="https://giscus.app/client.js"
+      data-repo={GISCUS_CONFIG.repo}
+      data-repo-id={GISCUS_CONFIG.repoId}
+      data-category={GISCUS_CONFIG.category}
+      data-category-id={GISCUS_CONFIG.categoryId}
+      data-mapping={GISCUS_CONFIG.mapping}
+      data-strict="0"
+      data-reactions-enabled={GISCUS_CONFIG.reactionsEnabled}
+      data-emit-metadata={GISCUS_CONFIG.emitMetadata}
+      data-input-position={GISCUS_CONFIG.inputPosition}
+      data-theme="preferred_color_scheme"
+      data-lang={GISCUS_CONFIG.lang}
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async
+    ></script>
+  ) : (
+    <div class="p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)]">
+      <p class="text-sm text-[var(--text-secondary)]">
+        💡 评论功能尚未配置。请访问
+        <a
+          href="https://giscus.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline hover:text-[var(--text-primary)]"
+        >
+          giscus.app
+        </a>
+        完成配置：
+      </p>
+      <ol class="mt-2 text-sm text-[var(--text-muted)] list-decimal list-inside space-y-1">
+        <li>确保仓库已启用 Discussions 功能</li>
+        <li>在 giscus.app 输入仓库信息获取配置 ID</li>
+        <li>将 repoId 和 categoryId 填入 src/utils/constants.ts</li>
+      </ol>
+    </div>
+  )}
 </div>
 
 <noscript>
-  <p class="text-[var(--text-muted)] text-sm">
+  <p class="text-[var(--text-muted)] text-sm mt-4">
     请启用 JavaScript 以查看评论。
   </p>
 </noscript>

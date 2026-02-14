@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+interface Props {
+  currentSlug: string;
+  categories: string[];
+  tags: string[];
+}
+
+const { currentSlug, categories, tags } = Astro.props;
+
+// Get all posts
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Calculate relevance score for each post
+const scoredPosts = allPosts
+  .filter(post => post.slug !== currentSlug)
+  .map(post => {
+    let score = 0;
+
+    // Category match (higher weight)
+    post.data.categories.forEach(cat => {
+      if (categories.includes(cat)) score += 3;
+    });
+
+    // Tag match
+    post.data.tags.forEach(tag => {
+      if (tags.includes(tag)) score += 2;
+    });
+
+    return { post, score };
+  })
+  .filter(({ score }) => score > 0)
+  .sort((a, b) => {
+    // Sort by score first, then by date
+    if (b.score !== a.score) return b.score - a.score;
+    return b.post.data.date.valueOf() - a.post.data.date.valueOf();
+  })
+  .slice(0, 3)
+  .map(({ post }) => post);
+---
+
+{scoredPosts.length > 0 && (
+  <section class="related-posts mt-16 pt-12 border-t border-[var(--border-color)]">
+    <h2 class="text-2xl font-serif font-semibold mb-8 text-[var(--text-primary)]">
+      相关文章
+    </h2>
+    <div class="space-y-8">
+      {scoredPosts.map(post => (
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          slug={post.slug}
+          date={post.data.date}
+          categories={post.data.categories}
+          image={post.data.image}
+          layout="horizontal"
+        />
+      ))}
+    </div>
+  </section>
+)}
