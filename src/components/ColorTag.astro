@@ -1,0 +1,58 @@
+---
+interface Props {
+  color: string;
+  label?: string;
+  class?: string;
+}
+
+const { color, label, class: className = '' } = Astro.props;
+const displayLabel = label || color;
+---
+
+<button
+  type="button"
+  class:list={[
+    "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-mono",
+    "bg-[var(--bg-secondary)] border border-[var(--border-color)]",
+    "hover:bg-[var(--bg-tertiary)] transition-colors cursor-pointer group",
+    "focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]",
+    className
+  ]}
+  data-color={color}
+  aria-label={`复制颜色 ${color}`}
+>
+  <span
+    class="w-4 h-4 rounded-full border border-[var(--border-color)]"
+    style={`background-color: ${color};`}
+  ></span>
+  <span class="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+    {displayLabel}
+  </span>
+  <span class="copy-feedback hidden text-xs text-green-500">已复制!</span>
+</button>
+
+<script>
+  document.querySelectorAll('[data-color]').forEach(button => {
+    button.addEventListener('click', async () => {
+      const color = button.getAttribute('data-color');
+      const feedback = button.querySelector('.copy-feedback');
+      const label = button.querySelector('span:nth-child(2)');
+
+      try {
+        await navigator.clipboard.writeText(color);
+
+        // Show feedback
+        if (feedback) feedback.classList.remove('hidden');
+        if (label) label.classList.add('hidden');
+
+        // Hide feedback after 1.5s
+        setTimeout(() => {
+          if (feedback) feedback.classList.add('hidden');
+          if (label) label.classList.remove('hidden');
+        }, 1500);
+      } catch (err) {
+        console.error('Failed to copy color:', err);
+      }
+    });
+  });
+</script>

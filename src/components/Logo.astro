@@ -1,0 +1,17 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<a
+  href="/"
+  class:list={[
+    "font-serif font-bold text-3xl md:text-4xl tracking-tight text-[var(--text-primary)] hover:opacity-80 transition-opacity",
+    className
+  ]}
+>
+  RollingTheRock
+</a>

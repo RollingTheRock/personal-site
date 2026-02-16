@@ -1,131 +1,62 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Sidebar from '../components/Sidebar.astro';
+import Logo from '../components/Logo.astro';
+import HeroSection from '../components/HeroSection.astro';
+import CategoryCards from '../components/CategoryCards.astro';
 import Subscribe from '../components/Subscribe.astro';
-import BlogCard from '../components/BlogCard.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import { getCollection } from 'astro:content';
-import { FEATURED_POSTS_COUNT, FEATURED_PROJECTS_COUNT } from '../utils/constants';
-
-// Get featured posts and projects
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const projects = await getCollection('projects');
-
-const featuredPosts = posts
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, FEATURED_POSTS_COUNT);
-
-const featuredProjects = projects
-  .filter(p => p.data.featured)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, FEATURED_PROJECTS_COUNT);
 ---
 
-<BaseLayout>
-  <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-    <div class="flex flex-col lg:flex-row gap-12">
-      <!-- Main Content -->
-      <main class="flex-1 page-transition">
-        <!-- Hero Section -->
-        <section class="mb-20 md:mb-32">
-          <div class="max-w-2xl">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
-              探索技术，<br />
-              <span class="text-[var(--text-secondary)]">分享思考</span>
-            </h1>
-            <p class="text-lg md:text-xl text-[var(--text-secondary)] mb-8 leading-relaxed">
-              我是 RollingTheRock，一名热爱技术的开发者。
-              这里记录我的学习历程、项目实践和技术思考。
-            </p>
-            <div class="flex flex-wrap gap-4">
-              <a
-                href="/blog"
-                class="inline-flex items-center px-6 py-3 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg font-medium hover:opacity-90 transition-opacity"
-              >
-                阅读博客
-                <svg class="ml-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </a>
-              <a
-                href="/projects"
-                class="inline-flex items-center px-6 py-3 border border-[var(--border-color)] rounded-lg font-medium hover:bg-[var(--bg-secondary)] transition-colors"
-              >
-                查看项目
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <!-- Featured Posts Section -->
-        {featuredPosts.length > 0 && (
-          <section class="mb-20 md:mb-32">
-            <div class="flex items-center justify-between mb-8">
-              <h2 class="text-2xl md:text-3xl font-serif font-semibold">最新文章</h2>
-              <a href="/blog" class="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1">
-                查看全部
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </a>
-            </div>
-            <div class="grid gap-8">
-              {featuredPosts.map(post => (
-                <BlogCard
-                  title={post.data.title}
-                  description={post.data.description}
-                  slug={post.slug}
-                  date={post.data.date}
-                  categories={post.data.categories}
-                  image={post.data.image}
-                  layout="horizontal"
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <!-- Featured Projects Section -->
-        {featuredProjects.length > 0 && (
-          <section class="mb-20 md:mb-32">
-            <div class="flex items-center justify-between mb-8">
-              <h2 class="text-2xl md:text-3xl font-serif font-semibold">精选项目</h2>
-              <a href="/projects" class="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1">
-                查看全部
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </a>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-              {featuredProjects.map(project => (
-                <ProjectCard
-                  title={project.data.title}
-                  description={project.data.description}
-                  slug={project.slug}
-                  image={project.data.image}
-                  tech={project.data.tech}
-                  github={project.data.github}
-                  demo={project.data.demo}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <!-- Subscribe Section -->
-        <section>
-          <Subscribe showPrivacy={true} />
-        </section>
-      </main>
-
-      <!-- Sidebar (Desktop only) -->
-      <div class="hidden lg:block">
-        <div class="sticky top-24">
-          <Sidebar />
-        </div>
+<BaseLayout noHeader={true} noFooter={false}>
+  <div class="min-h-screen flex flex-col">
+    {/* Header with Logo */}
+    <header class="w-full py-6 px-4 sm:px-6 lg:px-8 opacity-0-init animate-fade-in-down">
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <Logo />
+        {/* Mobile menu button */}
+        <button
+          type="button"
+          class="md:hidden p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+          aria-label="打开菜单"
+          onclick="document.dispatchEvent(new CustomEvent('toggle-mobile-menu'))"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        {/* Desktop navigation */}
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="/blog" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">博客</a>
+          <a href="/projects" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">项目</a>
+          <a href="/videos" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">视频</a>
+          <a href="/about" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">关于</a>
+        </nav>
       </div>
-    </div>
+    </header>
+
+    {/* Main Content */}
+    <main class="flex-1 page-transition">
+      {/* Hero Section */}
+      <HeroSection />
+
+      {/* Category Cards */}
+      <CategoryCards />
+
+      {/* Subscribe Section */}
+      <section class="py-16 md:py-20 opacity-0-init animate-slide-up delay-800">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Subscribe showPrivacy={true} />
+        </div>
+      </section>
+    </main>
   </div>
 </BaseLayout>
+
+<script>
+  // Trigger animations when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    // Elements are already set up with animation classes in the HTML
+    // The opacity-0-init ensures they start hidden, then the animation plays
+  });
+</script>

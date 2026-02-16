@@ -32,6 +32,16 @@
     --text-muted: #666666;
     --border-color: #2A2A2A;
     --accent: #FFFFFF;
+
+    /* 品牌色 - 复古拼贴风格 */
+    --brand-purple: #A855F7;
+    --brand-cyan: #06B6D4;
+    --brand-orange: #F97316;
+
+    /* 分类卡片背景色 */
+    --card-blog: #7C3AED;
+    --card-project: #0891B2;
+    --card-video: #EA580C;
   }
 
   * {
@@ -270,5 +280,67 @@
   .toc-link.active {
     color: var(--text-primary);
     font-weight: 500;
+  }
+
+  /* 首页动画关键帧 */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 首页动画类 */
+  .animate-fade-in-down {
+    animation: fadeInDown 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  /* 动画延迟工具类 */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  .delay-700 { animation-delay: 700ms; }
+  .delay-800 { animation-delay: 800ms; }
+
+  /* 初始隐藏（等待动画触发） */
+  .opacity-0-init {
+    opacity: 0;
   }
 }

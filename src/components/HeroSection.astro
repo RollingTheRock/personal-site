@@ -1,0 +1,58 @@
+---
+import ColorTag from './ColorTag.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../utils/constants';
+
+interface Props {
+  avatarSrc?: string;
+}
+
+const { avatarSrc = '/avatar.jpg' } = Astro.props;
+
+const brandColors = [
+  { color: '#A855F7', label: '#A855F7' },
+  { color: '#06B6D4', label: '#06B6D4' },
+  { color: '#F97316', label: '#F97316' },
+];
+---
+
+<section class="py-16 md:py-24 lg:py-32">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    {/* Avatar */}
+    <div class="mb-8 opacity-0-init animate-scale-in delay-200">
+      <div class="relative inline-block">
+        <img
+          src={avatarSrc}
+          alt="RollingTheRock"
+          class="w-40 h-40 md:w-52 md:h-52 rounded-full object-cover"
+          style="border: 4px solid var(--brand-purple); box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3);"
+          onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=RollingTheRock'"
+        />
+        {/* Decorative ring */}
+        <div
+          class="absolute inset-0 rounded-full -z-10"
+          style="transform: scale(1.15); border: 2px dashed var(--brand-purple); opacity: 0.3;"
+        ></div>
+      </div>
+    </div>
+
+    {/* Intro Text */}
+    <div class="space-y-4 mb-8">
+      <h1 class="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] opacity-0-init animate-fade-in-down delay-300">
+        我是 RollingTheRock
+      </h1>
+      <p class="text-lg md:text-xl text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed opacity-0-init animate-fade-in-down delay-400">
+        一名热爱技术的开发者。
+      </p>
+      <p class="text-base md:text-lg text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed opacity-0-init animate-fade-in-down delay-500">
+        这里记录我的学习历程、项目实践和技术思考。
+      </p>
+    </div>
+
+    {/* Color Tags */}
+    <div class="flex flex-wrap justify-center gap-3 opacity-0-init animate-fade-in-down delay-600">
+      {brandColors.map(({ color, label }) => (
+        <ColorTag color={color} label={label} />
+      ))}
+    </div>
+  </div>
+</section>
