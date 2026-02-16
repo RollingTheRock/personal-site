@@ -343,4 +343,18 @@
   .opacity-0-init {
     opacity: 0;
   }
+
+  /* 尊重用户的减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in-down,
+    .animate-scale-in,
+    .animate-slide-up {
+      animation: none;
+      opacity: 1;
+    }
+
+    .opacity-0-init {
+      opacity: 1;
+    }
+  }
 }
