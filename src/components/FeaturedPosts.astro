@@ -1,0 +1,97 @@
+---
+const featuredPosts = {
+  main: {
+    title: '排序的隐藏维度：从"会排序"到"会用排序"的思维跃迁',
+    description: '一篇关于算法竞赛中排序技巧的系统性总结，从识别信号到设计策略。',
+    date: '2026年1月23日',
+    tags: ['#ACM', '#算法'],
+    gradient: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)',
+    tag: '思考'
+  },
+  side: [
+    {
+      title: '数据不会死',
+      description: '关于数据、记忆和遗忘的思考。',
+      date: '2026年1月20日',
+      gradient: 'linear-gradient(135deg, #0891B2 0%, #06B6D4 100%)',
+      tag: '技术'
+    },
+    {
+      title: '欢迎来到我的博客',
+      description: '一个记录技术、思考和成长的地方。',
+      date: '2026年1月18日',
+      gradient: 'linear-gradient(135deg, #EA580C 0%, #F97316 100%)',
+      tag: '生活'
+    }
+  ]
+};
+---
+
+<section class="featured-posts py-20 md:py-[80px] border-t border-[#262626]">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-[32px] text-white font-bold">精选博客</h2>
+      <a
+        href="/blog"
+        class="text-[#A855F7] hover:underline transition-all"
+      >
+        查看全部 →
+      </a>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6">
+      <!-- Main Large Card -->
+      <article class="post-card post-card--large group rounded-2xl overflow-hidden bg-[#1a1a1a] hover:-translate-y-1 transition-transform duration-300">
+        <div
+          class="post-image h-[200px] relative flex items-start justify-start p-6"
+          style={`background: ${featuredPosts.main.gradient}`}
+        >
+          <span class="post-tag inline-block px-3 py-1 text-sm text-white bg-black/50 rounded-lg">
+            {featuredPosts.main.tag}
+          </span>
+        </div>
+        <div class="post-content p-6">
+          <h3 class="text-xl font-bold text-white mb-2 group-hover:text-[#A855F7] transition-colors">
+            {featuredPosts.main.title}
+          </h3>
+          <p class="text-[#a3a3a3] text-base mb-4">
+            {featuredPosts.main.description}
+          </p>
+          <div class="post-meta text-[#737373] text-sm flex items-center gap-2">
+            <span>{featuredPosts.main.date}</span>
+            <span>{featuredPosts.main.tags.join(' ')}</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Side Stack -->
+      <div class="post-stack flex flex-col gap-6">
+        {featuredPosts.side.map((post) => (
+          <article class="post-card post-card--small group rounded-2xl overflow-hidden bg-[#1a1a1a] hover:-translate-y-1 transition-transform duration-300">
+            <div
+              class="post-image h-[120px] relative flex items-start justify-start p-4"
+              style={`background: ${post.gradient}`}
+            >
+              <span class="post-tag inline-block px-3 py-1 text-sm text-white bg-black/50 rounded-lg">
+                {post.tag}
+              </span>
+            </div>
+            <div class="post-content p-6">
+              <h3 class="text-lg font-bold text-white mb-1 group-hover:text-[#A855F7] transition-colors">
+                {post.title}
+              </h3>
+              <p class="text-[#a3a3a3] text-sm mb-2">
+                {post.description}
+              </p>
+              <div class="post-meta text-[#737373] text-xs">
+                {post.date}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

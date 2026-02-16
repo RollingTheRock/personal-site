@@ -1,6 +1,4 @@
 ---
-import { SITE_DESCRIPTION } from '../utils/constants';
-
 interface Props {
   avatarSrc?: string;
 }
@@ -8,12 +6,12 @@ interface Props {
 const { avatarSrc = '/avatar.jpg' } = Astro.props;
 ---
 
-<section class="py-12 md:py-16 lg:py-20">
+<section class="py-20 md:py-[80px] pb-[60px]">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    {/* Avatar with decorative layer */}
+    <!-- Avatar with decorative layer -->
     <div class="mb-10 opacity-0-init animate-scale-in delay-200">
       <div class="relative inline-block">
-        {/* Decorative background layer - vintage texture */}
+        <!-- Decorative background layer - vintage texture -->
         <div
           class="absolute rounded-full -z-10"
           style="
@@ -32,7 +30,7 @@ const { avatarSrc = '/avatar.jpg' } = Astro.props;
           "
         ></div>
 
-        {/* Avatar */}
+        <!-- Avatar -->
         <img
           src={avatarSrc}
           alt="头像"
@@ -50,12 +48,43 @@ const { avatarSrc = '/avatar.jpg' } = Astro.props;
       </div>
     </div>
 
-    {/* Intro Text */}
-    <div class="space-y-3">
-      <p class="text-2xl md:text-3xl text-white font-semibold opacity-0-init animate-fade-in-down delay-300">
+    <!-- Intro Text - Three Layers -->
+    <div class="space-y-0">
+      <!-- Layer 1: Main Title -->
+      <p
+        class="opacity-0-init animate-fade-in-down delay-300"
+        style="
+          font-size: clamp(1.5rem, 4vw, 2.5rem);
+          font-weight: 700;
+          color: #ffffff;
+          margin-bottom: 16px;
+        "
+      >
         一名热爱技术的开发者
       </p>
-      <p class="text-base md:text-lg text-[#e5e5e5] opacity-0-init animate-fade-in-down delay-400">
+
+      <!-- Layer 2: Subtitle (Brand Purple) -->
+      <p
+        class="opacity-0-init animate-fade-in-down delay-400"
+        style="
+          font-size: clamp(1rem, 2vw, 1.25rem);
+          color: #A855F7;
+          font-weight: 500;
+          margin-bottom: 12px;
+        "
+      >
+        探索技术，分享思考，记录成长
+      </p>
+
+      <!-- Layer 3: Description -->
+      <p
+        class="opacity-0-init animate-fade-in-down delay-500"
+        style="
+          font-size: 16px;
+          color: #a3a3a3;
+          margin-bottom: 32px;
+        "
+      >
         这里记录我的学习历程、项目实践和技术思考。
       </p>
     </div>

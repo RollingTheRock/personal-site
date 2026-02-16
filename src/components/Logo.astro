@@ -9,9 +9,16 @@ const { class: className = '' } = Astro.props;
 <a
   href="/"
   class:list={[
-    "font-serif font-bold text-4xl md:text-5xl tracking-tight text-[var(--text-primary)] hover:opacity-80 transition-opacity",
+    "text-[var(--text-primary)] hover:opacity-80 transition-opacity inline-block",
     className
   ]}
+  style="
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 6rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  "
 >
   RollingTheRock
 </a>

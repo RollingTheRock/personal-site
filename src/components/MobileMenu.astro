@@ -1,54 +1,37 @@
 ---
-import { NAV_LINKS } from '../utils/constants';
-
-interface Props {
-  currentPath: string;
-}
-
-const { currentPath } = Astro.props;
+const navItems = [
+  { href: '/', label: '🏠 首页' },
+  { href: '/blog', label: '📝 博客' },
+  { href: '/projects', label: '💼 项目' },
+  { href: '/videos', label: '🎥 视频' },
+  { href: '/about', label: '👤 关于' },
+];
 ---
 
-<!-- Mobile Menu Button -->
-<button
-  id="mobile-menu-btn"
-  class="md:hidden p-2 text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
-  aria-label="打开菜单"
-  aria-expanded="false"
-  aria-controls="mobile-menu"
->
-  <svg id="menu-icon-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="3" y1="12" x2="21" y2="12"></line>
-    <line x1="3" y1="6" x2="21" y2="6"></line>
-    <line x1="3" y1="18" x2="21" y2="18"></line>
-  </svg>
-  <svg id="menu-icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>
-</button>
-
 <!-- Mobile Menu Overlay -->
-<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 hidden md:hidden opacity-0 transition-opacity duration-300"></div>
+<div
+  id="menu-overlay"
+  class="fixed inset-0 bg-black/60 z-[999] opacity-0 pointer-events-none transition-opacity duration-300"
+  onclick="window.closeMobileMenu()"
+>
+</div>
 
 <!-- Mobile Menu Panel -->
-<div
-  id="mobile-menu"
-  class="fixed top-0 right-0 h-full w-[280px] border-l border-[var(--border-color)] z-50 transform translate-x-full transition-transform duration-300 ease-out md:hidden"
-  style="backdrop-filter: blur(20px); background-color: rgba(10, 10, 10, 0.85);"
-  role="dialog"
-  aria-modal="true"
-  aria-label="移动端导航菜单"
+<aside
+  id="mobile-menu-panel"
+  class="fixed top-0 right-0 w-[300px] h-screen z-[1000] transform translate-x-full transition-transform duration-300 ease-out"
+  style="background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px);"
 >
   <div class="flex flex-col h-full">
-    <!-- Header with close button -->
-    <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]">
-      <span class="font-serif font-semibold">导航</span>
+    <!-- Close button -->
+    <div class="flex justify-end p-5">
       <button
-        id="mobile-menu-close"
-        class="p-2 text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+        type="button"
+        onclick="window.closeMobileMenu()"
+        class="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
         aria-label="关闭菜单"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
@@ -56,163 +39,105 @@ const { currentPath } = Astro.props;
     </div>
 
     <!-- Navigation Links -->
-    <nav class="flex-1 p-4 space-y-1">
-      {NAV_LINKS.map(link => {
-        const isActive = currentPath === link.href || currentPath.startsWith(`${link.href}/`);
-        return (
-          <a
-            href={link.href}
-            class={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
-                : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
-            }`}
-          >
-            {link.label}
-          </a>
-        );
-      })}
+    <nav class="flex-1 px-6">
+      <ul class="space-y-1">
+        {navItems.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="block py-3 text-lg leading-[56px] text-white/80 hover:text-[#A855F7] transition-colors"
+              onclick="window.closeMobileMenu()"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Divider -->
+      <div class="my-6 border-t border-white/10"></div>
+
+      <!-- Theme Toggle -->
+      <button
+        type="button"
+        id="mobile-theme-toggle"
+        class="flex items-center gap-3 py-3 text-lg text-white/80 hover:text-[#A855F7] transition-colors w-full"
+        onclick="window.toggleMobileTheme()"
+      >
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">深色/浅色</span>
+      </button>
     </nav>
 
-    <!-- Theme Toggle -->
-    <div class="p-4 border-t border-[var(--border-color)]">
-      <div class="flex items-center justify-between px-4 py-2">
-        <span class="text-sm text-[var(--text-secondary)]">主题</span>
-        <button
-          id="mobile-theme-toggle"
-          class="p-2 rounded-lg hover:bg-white/10 transition-colors"
-          aria-label="切换主题"
-        >
-          <svg id="theme-icon-light" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-
     <!-- Footer -->
-    <div class="p-4 border-t border-[var(--border-color)]">
-      <p class="text-xs text-[var(--text-muted)] text-center">
+    <div class="p-6 border-t border-white/10">
+      <p class="text-sm text-white/40 text-center">
         © 2026 RollingTheRock
       </p>
     </div>
   </div>
-</div>
+</aside>
 
-<script>
-  function initMobileMenu() {
-    const menuBtn = document.getElementById('mobile-menu-btn');
-    const closeBtn = document.getElementById('mobile-menu-close');
-    const menu = document.getElementById('mobile-menu');
-    const overlay = document.getElementById('mobile-menu-overlay');
-    const openIcon = document.getElementById('menu-icon-open');
-    const closeIcon = document.getElementById('menu-icon-close');
+<script is:inline>
+  // Global functions for menu control
+  window.openMobileMenu = function() {
+    const panel = document.getElementById('mobile-menu-panel');
+    const overlay = document.getElementById('menu-overlay');
 
-    if (!menuBtn || !menu || !overlay) return;
-
-    function openMenu() {
-      menu.classList.remove('translate-x-full');
-      overlay.classList.remove('hidden');
-      setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-      openIcon?.classList.add('hidden');
-      closeIcon?.classList.remove('hidden');
-      menuBtn.setAttribute('aria-expanded', 'true');
+    if (panel && overlay) {
+      panel.classList.remove('translate-x-full');
+      overlay.classList.remove('opacity-0', 'pointer-events-none');
       document.body.style.overflow = 'hidden';
     }
+  };
 
-    function closeMenu() {
-      menu.classList.add('translate-x-full');
-      overlay.classList.add('opacity-0');
-      setTimeout(() => overlay.classList.add('hidden'), 300);
-      openIcon?.classList.remove('hidden');
-      closeIcon?.classList.add('hidden');
-      menuBtn.setAttribute('aria-expanded', 'false');
+  window.closeMobileMenu = function() {
+    const panel = document.getElementById('mobile-menu-panel');
+    const overlay = document.getElementById('menu-overlay');
+
+    if (panel && overlay) {
+      panel.classList.add('translate-x-full');
+      overlay.classList.add('opacity-0', 'pointer-events-none');
       document.body.style.overflow = '';
     }
+  };
 
-    menuBtn.addEventListener('click', () => {
-      const isOpen = menuBtn.getAttribute('aria-expanded') === 'true';
-      if (isOpen) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
-    });
+  // Theme toggle
+  window.toggleMobileTheme = function() {
+    const currentTheme = localStorage.getItem('theme') || 'system';
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = currentTheme === 'dark' || (currentTheme === 'system' && prefersDark);
 
-    closeBtn?.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
-
-    // Close on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') {
-        closeMenu();
-      }
-    });
-
-    // Close menu when clicking a link
-    menu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', closeMenu);
-    });
-  }
-
-  // Initialize on page load
-  initMobileMenu();
-
-  // Re-initialize after Astro view transitions
-  document.addEventListener('astro:page-load', initMobileMenu);
-
-  // Theme toggle logic
-  function initThemeToggle() {
-    const themeToggle = document.getElementById('mobile-theme-toggle');
-    const lightIcon = document.getElementById('theme-icon-light');
-    const darkIcon = document.getElementById('theme-icon-dark');
-
-    if (!themeToggle) return;
-
-    function updateThemeIcon() {
-      const theme = localStorage.getItem('theme') || 'system';
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
-
-      if (isDark) {
-        lightIcon?.classList.remove('hidden');
-        darkIcon?.classList.add('hidden');
-      } else {
-        lightIcon?.classList.add('hidden');
-        darkIcon?.classList.remove('hidden');
-      }
+    if (isDark) {
+      localStorage.setItem('theme', 'light');
+      document.documentElement.setAttribute('data-theme', 'light');
+      updateThemeIcon(false);
+    } else {
+      localStorage.setItem('theme', 'dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      updateThemeIcon(true);
     }
+  };
 
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = localStorage.getItem('theme') || 'system';
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const isDark = currentTheme === 'dark' || (currentTheme === 'system' && prefersDark);
-
-      if (isDark) {
-        localStorage.setItem('theme', 'light');
-        document.documentElement.setAttribute('data-theme', 'light');
-      } else {
-        localStorage.setItem('theme', 'dark');
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-
-      updateThemeIcon();
-    });
-
-    updateThemeIcon();
+  function updateThemeIcon(isDark) {
+    const icon = document.getElementById('theme-icon');
+    if (icon) {
+      icon.textContent = isDark ? '☀️' : '🌙';
+    }
   }
 
-  initThemeToggle();
-  document.addEventListener('astro:page-load', initThemeToggle);
+  // Update icon on load
+  (function() {
+    const theme = localStorage.getItem('theme') || 'system';
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
+    updateThemeIcon(isDark);
+  })();
+
+  // Close on ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      window.closeMobileMenu();
+    }
+  });
 </script>
