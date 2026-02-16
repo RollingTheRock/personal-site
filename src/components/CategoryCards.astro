@@ -4,34 +4,30 @@ interface CategoryCard {
   description: string;
   href: string;
   color: string;
-  bgColor: string;
-  image?: string;
+  emoji: string;
 }
 
 const categories: CategoryCard[] = [
   {
     title: 'Blog',
-    description: '技术文章与思考',
+    description: '思考观点 · 技术笔记',
     href: '/blog',
     color: '#7C3AED',
-    bgColor: 'var(--card-blog)',
-    image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop&q=80&sat=-100&contrast=1.2'
+    emoji: '📝'
   },
   {
     title: 'Projects',
-    description: '开源项目与实践',
+    description: '案例展示 · 开源作品',
     href: '/projects',
     color: '#0891B2',
-    bgColor: 'var(--card-project)',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&q=80&sat=-100&contrast=1.2'
+    emoji: '💼'
   },
   {
     title: 'Videos',
-    description: '视频教程与分享',
+    description: '教程资源 · 分享推荐',
     href: '/videos',
     color: '#EA580C',
-    bgColor: 'var(--card-video)',
-    image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=300&fit=crop&q=80&sat=-100&contrast=1.2'
+    emoji: '🎥'
   }
 ];
 
@@ -42,64 +38,44 @@ interface Props {
 const { class: className = '' } = Astro.props;
 ---
 
-<section class:list={["py-16 md:py-20", className]}>
+<section class:list={["py-8 md:py-12", className]}>
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       {categories.map((category, index) => (
         <a
           href={category.href}
           class:list={[
-            "group relative overflow-hidden rounded-2xl p-6 md:p-8",
+            "group flex flex-col rounded-2xl p-8 h-[280px]",
             "transition-all duration-300 ease-out",
-            "hover:-translate-y-2 hover:shadow-2xl",
+            "hover:-translate-y-2",
             "opacity-0-init animate-slide-up"
           ]}
-          style={`
-            background-color: ${category.bgColor};
-            animation-delay: ${700 + index * 100}ms;
-          `}
+          style={{
+            backgroundColor: category.color,
+            animationDelay: `${500 + index * 100}ms`,
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+          }}
+          onmouseenter="this.style.boxShadow='0 20px 40px -10px rgba(0, 0, 0, 0.3)';"
+          onmouseleave="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)';"
         >
-          {/* Background Image */}
-          <div class="absolute inset-0 opacity-30">
-            <img
-              src={category.image}
-              alt=""
-              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              style="filter: grayscale(100%) contrast(1.3);"
-              loading="lazy"
-            />
+          {/* Emoji placeholder - top 60% */}
+          <div class="h-[60%] flex items-center justify-center">
+            <span
+              class="text-6xl md:text-7xl transition-transform duration-300 group-hover:scale-105"
+              style="filter: grayscale(100%) contrast(1.2);"
+            >
+              {category.emoji}
+            </span>
           </div>
 
-          {/* Overlay */}
-          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
-
-          {/* Content */}
-          <div class="relative z-10 h-full flex flex-col justify-end min-h-[240px] md:min-h-[280px]">
+          {/* Text content - bottom 40% */}
+          <div class="flex-1 flex flex-col justify-end">
             <h3 class="font-serif text-2xl md:text-3xl font-bold text-white mb-2">
               {category.title}
             </h3>
             <p class="text-white/80 text-sm md:text-base">
               {category.description}
             </p>
-
-            {/* Arrow indicator */}
-            <div class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="text-white"
-              >
-                <path d="M7 17L17 7"/>
-                <path d="M7 7h10v10"/>
-              </svg>
-            </div>
           </div>
         </a>
       ))}

@@ -4,20 +4,22 @@ import Logo from '../components/Logo.astro';
 import HeroSection from '../components/HeroSection.astro';
 import CategoryCards from '../components/CategoryCards.astro';
 import Subscribe from '../components/Subscribe.astro';
+import MobileMenu from '../components/MobileMenu.astro';
 ---
 
 <BaseLayout noHeader={true} noFooter={false}>
   <div class="min-h-screen flex flex-col">
-    {/* Header with Logo */}
+    {/* Header with Logo and Hamburger Menu */}
     <header class="w-full py-6 px-4 sm:px-6 lg:px-8 opacity-0-init animate-fade-in-down">
       <div class="max-w-6xl mx-auto flex items-center justify-between">
         <Logo />
-        {/* Mobile menu button */}
+        {/* Hamburger menu button - all screen sizes */}
         <button
           type="button"
-          class="md:hidden p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
+          id="header-menu-btn"
+          class="p-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors"
           aria-label="打开菜单"
-          onclick="document.dispatchEvent(new CustomEvent('toggle-mobile-menu'))"
+          aria-expanded="false"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -25,15 +27,11 @@ import Subscribe from '../components/Subscribe.astro';
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
-        {/* Desktop navigation */}
-        <nav class="hidden md:flex items-center gap-8">
-          <a href="/blog" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">博客</a>
-          <a href="/projects" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">项目</a>
-          <a href="/videos" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">视频</a>
-          <a href="/about" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">关于</a>
-        </nav>
       </div>
     </header>
+
+    {/* Mobile Menu */}
+    <MobileMenu currentPath="/" />
 
     {/* Main Content */}
     <main class="flex-1 page-transition">
@@ -53,3 +51,17 @@ import Subscribe from '../components/Subscribe.astro';
   </div>
 </BaseLayout>
 
+<script>
+  // Header menu button - trigger mobile menu
+  document.addEventListener('DOMContentLoaded', () => {
+    const headerMenuBtn = document.getElementById('header-menu-btn');
+
+    headerMenuBtn?.addEventListener('click', () => {
+      // Trigger the mobile menu toggle
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      if (menuBtn) {
+        menuBtn.click();
+      }
+    });
+  });
+</script>
