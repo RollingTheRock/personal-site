@@ -6,6 +6,7 @@ interface CategoryCard {
   color: string;
   iconBgColor: string;
   emoji: string;
+  radialGradient: string;
 }
 
 const categories: CategoryCard[] = [
@@ -15,7 +16,8 @@ const categories: CategoryCard[] = [
     href: '/blog',
     color: '#7C3AED',
     iconBgColor: '#6D28D9',
-    emoji: '📝'
+    emoji: '📝',
+    radialGradient: 'radial-gradient(circle at 30% 40%, rgba(168,85,247,0.3), transparent 60%)'
   },
   {
     title: 'Projects',
@@ -23,7 +25,8 @@ const categories: CategoryCard[] = [
     href: '/projects',
     color: '#0891B2',
     iconBgColor: '#077A96',
-    emoji: '💼'
+    emoji: '💼',
+    radialGradient: 'radial-gradient(circle at 70% 30%, rgba(6,182,212,0.3), transparent 60%)'
   },
   {
     title: 'Videos',
@@ -31,7 +34,8 @@ const categories: CategoryCard[] = [
     href: '/videos',
     color: '#EA580C',
     iconBgColor: '#D14A0A',
-    emoji: '🎥'
+    emoji: '🎥',
+    radialGradient: 'radial-gradient(circle at 50% 60%, rgba(249,115,22,0.3), transparent 60%)'
   }
 ];
 
@@ -42,9 +46,9 @@ interface Props {
 const { class: className = '' } = Astro.props;
 ---
 
-<section class:list={["pb-20 md:pb-[80px]", className]}>
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<section class:list={["pb-16 md:pb-[64px]", className]}>
+  <div class="container-medium">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       {categories.map((category, index) => (
         <a
           href={category.href}
@@ -57,15 +61,18 @@ const { class: className = '' } = Astro.props;
           style={{
             backgroundColor: category.color,
             animationDelay: `${500 + index * 100}ms`,
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 -1px 0 rgba(255,255,255,0.1)'
           }}
-          onmouseenter="this.style.boxShadow='0 20px 40px -10px rgba(0, 0, 0, 0.3)';"
-          onmouseleave="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)';"
+          onmouseenter="this.style.boxShadow='0 20px 40px -10px rgba(0, 0, 0, 0.3), inset 0 -1px 0 rgba(255,255,255,0.1)';"
+          onmouseleave="this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1), inset 0 -1px 0 rgba(255,255,255,0.1)';"
         >
-          {/* Icon area - 60% height with darker background */}
+          {/* Icon area - 60% height with darker background and radial gradient */}
           <div
-            class="h-[60%] flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
-            style={{ backgroundColor: category.iconBgColor }}
+            class="h-[60%] flex items-center justify-center transition-transform duration-300 group-hover:scale-105 relative overflow-hidden"
+            style={{
+              backgroundColor: category.iconBgColor,
+              backgroundImage: category.radialGradient
+            }}
           >
             <span
               class="text-6xl md:text-[64px]"
@@ -78,8 +85,8 @@ const { class: className = '' } = Astro.props;
           {/* Text content - 40% height */}
           <div class="flex-1 flex flex-col justify-center p-6">
             <h3
-              class="font-serif font-bold text-white mb-2"
-              style={{ fontSize: '28px' }}
+              class="font-bold text-white mb-2"
+              style="font-family: var(--font-display) !important; font-size: 28px;"
             >
               {category.title}
             </h3>

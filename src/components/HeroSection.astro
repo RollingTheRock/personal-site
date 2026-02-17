@@ -6,10 +6,10 @@ interface Props {
 const { avatarSrc = '/avatar.jpg' } = Astro.props;
 ---
 
-<section class="py-20 md:py-[80px] pb-[60px]">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<section class="pt-8 pb-16 md:pb-[64px]">
+  <div class="container-narrow text-center">
     <!-- Avatar with decorative layer -->
-    <div class="mb-10 opacity-0-init animate-scale-in delay-200">
+    <div class="mb-8 opacity-0-init animate-scale-in delay-200">
       <div class="relative inline-block">
         <!-- Decorative background layer - vintage texture -->
         <div
@@ -54,6 +54,7 @@ const { avatarSrc = '/avatar.jpg' } = Astro.props;
       <p
         class="opacity-0-init animate-fade-in-down delay-300"
         style="
+          font-family: var(--font-display) !important;
           font-size: clamp(1.5rem, 4vw, 2.5rem);
           font-weight: 700;
           color: #ffffff;

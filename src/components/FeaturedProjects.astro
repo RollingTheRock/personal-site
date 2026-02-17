@@ -24,10 +24,10 @@ const projects = [
 ---
 
 <section class="featured-projects py-20 md:py-[80px] border-t border-[#262626]">
-  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="container-wide">
     <!-- Section Header -->
     <div class="flex items-center justify-between mb-8">
-      <h2 class="text-[32px] text-white font-bold">精选项目</h2>
+      <h2 class="section-title-premium" style="font-family: var(--font-display) !important;">精选项目</h2>
       <a
         href="/projects"
         class="text-[#A855F7] hover:underline transition-all"
@@ -40,8 +40,11 @@ const projects = [
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       {projects.map((project) => (
         <article
-          class="project-card group rounded-2xl p-8 bg-[#1a1a1a] hover:-translate-y-1 transition-transform duration-300"
-          style="border-left: 4px solid #0891B2;"
+          class="project-card group rounded-2xl p-8 card-premium hover:-translate-y-1 transition-transform duration-300"
+          style="
+            border-left: 3px solid;
+            border-image: linear-gradient(to bottom, #06B6D4, #A855F7) 1;
+          "
         >
           <div class="project-icon text-5xl mb-4">{project.icon}</div>
 
@@ -55,7 +58,10 @@ const projects = [
 
           <div class="project-tags flex flex-wrap gap-2 mb-6">
             {project.tags.map((tag) => (
-              <span class="px-3 py-1 text-[13px] text-[#a3a3a3] bg-[#262626] rounded-lg">
+              <span
+                class="px-3 py-1 text-[12px] text-[#a3a3a3] rounded-lg"
+                style="border: 1px solid #333; background: transparent;"
+              >
                 {tag}
               </span>
             ))}

@@ -12,15 +12,15 @@ import MobileMenu from '../components/MobileMenu.astro';
 <BaseLayout noHeader={true} noFooter={false}>
   <div class="min-h-screen flex flex-col">
     <!-- Header with Centered Logo and Absolute Positioned Menu Button -->
-    <header class="relative w-full py-6 px-4 sm:px-6 lg:px-8 opacity-0-init animate-fade-in-down">
-      <div class="max-w-6xl mx-auto flex items-center justify-center">
+    <header class="relative w-full pt-12 pb-16 opacity-0-init animate-fade-in-down">
+      <div class="container-wide flex items-center justify-center">
         <Logo />
       </div>
 
       <!-- Hamburger menu button - absolute positioned -->
       <button
         type="button"
-        class="absolute right-4 sm:right-6 lg:right-8 top-1/2 -translate-y-1/2 p-2 text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+        class="absolute right-6 lg:right-8 top-1/2 -translate-y-1/2 p-2 text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
         aria-label="打开菜单"
         onclick="window.openMobileMenu()"
       >
@@ -41,17 +41,17 @@ import MobileMenu from '../components/MobileMenu.astro';
       <HeroSection />
 
       <!-- Category Cards -->
-      <CategoryCards />
+      <CategoryCards class="pt-16" />
 
       <!-- Featured Posts -->
-      <FeaturedPosts />
+      <FeaturedPosts class="pt-24" />
 
       <!-- Featured Projects -->
       <FeaturedProjects />
 
       <!-- Subscribe Section -->
       <section class="py-20 md:py-[80px] border-t border-[#262626] opacity-0-init animate-slide-up delay-800">
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="container-narrow">
           <Subscribe showPrivacy={true} />
         </div>
       </section>

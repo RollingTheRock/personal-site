@@ -13,7 +13,7 @@ const { class: className = '' } = Astro.props;
     className
   ]}
   style="
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-display) !important;
     font-weight: 900;
     font-size: clamp(3rem, 8vw, 6rem);
     letter-spacing: -0.02em;

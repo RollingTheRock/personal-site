@@ -1,4 +1,10 @@
 ---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
 const featuredPosts = {
   main: {
     title: '排序的隐藏维度：从"会排序"到"会用排序"的思维跃迁',
@@ -27,11 +33,11 @@ const featuredPosts = {
 };
 ---
 
-<section class="featured-posts py-20 md:py-[80px] border-t border-[#262626]">
-  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+<section class:list={["featured-posts py-24 md:py-[96px] border-t border-[#262626]", className]}>
+  <div class="container-wide">
     <!-- Section Header -->
     <div class="flex items-center justify-between mb-8">
-      <h2 class="text-[32px] text-white font-bold">精选博客</h2>
+      <h2 class="section-title-premium" style="font-family: var(--font-display) !important;">精选博客</h2>
       <a
         href="/blog"
         class="text-[#A855F7] hover:underline transition-all"
@@ -43,23 +49,41 @@ const featuredPosts = {
     <!-- Posts Grid -->
     <div class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6">
       <!-- Main Large Card -->
-      <article class="post-card post-card--large group rounded-2xl overflow-hidden bg-[#1a1a1a] hover:-translate-y-1 transition-transform duration-300">
+      <article class="post-card post-card--large group rounded-2xl overflow-hidden card-premium hover:-translate-y-1 transition-all duration-300">
         <div
-          class="post-image h-[200px] relative flex items-start justify-start p-6"
+          class="post-image h-[200px] relative flex items-start justify-start p-6 overflow-hidden"
           style={`background: ${featuredPosts.main.gradient}`}
         >
-          <span class="post-tag inline-block px-3 py-1 text-sm text-white bg-black/50 rounded-lg">
+          <!-- Diagonal decorative line -->
+          <div class="absolute inset-0 pointer-events-none">
+            <div
+              class="absolute top-1/2 left-0 w-[200%] h-[1px]"
+              style="
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transform: rotate(-45deg) translateY(-50%);
+                transform-origin: left center;
+              "
+            ></div>
+          </div>
+          <span
+            class="post-tag relative z-10 inline-block text-white text-xs px-3 py-1 rounded-md"
+            style="
+              background: rgba(0,0,0,0.4);
+              backdrop-filter: blur(4px);
+              border: 1px solid rgba(255,255,255,0.1);
+            "
+          >
             {featuredPosts.main.tag}
           </span>
         </div>
         <div class="post-content p-6">
-          <h3 class="text-xl font-bold text-white mb-2 group-hover:text-[#A855F7] transition-colors">
+          <h3 class="text-xl font-bold text-white mb-2 group-hover:text-[#A855F7] transition-colors" style="font-weight: 700;">
             {featuredPosts.main.title}
           </h3>
           <p class="text-[#a3a3a3] text-base mb-4">
             {featuredPosts.main.description}
           </p>
-          <div class="post-meta text-[#737373] text-sm flex items-center gap-2">
+          <div class="post-meta text-[#525252] text-[13px] flex items-center gap-2">
             <span>{featuredPosts.main.date}</span>
             <span>{featuredPosts.main.tags.join(' ')}</span>
           </div>
@@ -69,23 +93,41 @@ const featuredPosts = {
       <!-- Side Stack -->
       <div class="post-stack flex flex-col gap-6">
         {featuredPosts.side.map((post) => (
-          <article class="post-card post-card--small group rounded-2xl overflow-hidden bg-[#1a1a1a] hover:-translate-y-1 transition-transform duration-300">
+          <article class="post-card post-card--small group rounded-2xl overflow-hidden card-premium hover:-translate-y-1 transition-all duration-300">
             <div
-              class="post-image h-[120px] relative flex items-start justify-start p-4"
+              class="post-image h-[120px] relative flex items-start justify-start p-4 overflow-hidden"
               style={`background: ${post.gradient}`}
             >
-              <span class="post-tag inline-block px-3 py-1 text-sm text-white bg-black/50 rounded-lg">
+              <!-- Diagonal decorative line -->
+              <div class="absolute inset-0 pointer-events-none">
+                <div
+                  class="absolute top-1/2 left-0 w-[200%] h-[1px]"
+                  style="
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                    transform: rotate(-45deg) translateY(-50%);
+                    transform-origin: left center;
+                  "
+                ></div>
+              </div>
+              <span
+                class="post-tag relative z-10 inline-block text-white text-xs px-3 py-1 rounded-md"
+                style="
+                  background: rgba(0,0,0,0.4);
+                  backdrop-filter: blur(4px);
+                  border: 1px solid rgba(255,255,255,0.1);
+                "
+              >
                 {post.tag}
               </span>
             </div>
             <div class="post-content p-6">
-              <h3 class="text-lg font-bold text-white mb-1 group-hover:text-[#A855F7] transition-colors">
+              <h3 class="text-lg font-bold text-white mb-1 group-hover:text-[#A855F7] transition-colors" style="font-weight: 700;">
                 {post.title}
               </h3>
               <p class="text-[#a3a3a3] text-sm mb-2">
                 {post.description}
               </p>
-              <div class="post-meta text-[#737373] text-xs">
+              <div class="post-meta text-[#525252] text-[13px]">
                 {post.date}
               </div>
             </div>

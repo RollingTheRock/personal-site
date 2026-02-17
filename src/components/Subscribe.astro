@@ -20,11 +20,17 @@ const BUTTONDOWN_URL = 'https://buttondown.email/api/emails/embed-subscribe/roll
         name="email"
         placeholder="your@email.com"
         required
-        class="flex-1 px-3 py-2 text-sm bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:border-[var(--text-primary)] transition-colors"
+        class="flex-1 px-3 py-2 text-sm rounded-lg focus:outline-none transition-colors"
+        style="background: #0a0a0a; border: 1px solid #333;"
+        onfocus="this.style.borderColor='#A855F7'"
+        onblur="this.style.borderColor='#333'"
       />
       <button
         type="submit"
-        class="subscribe-btn px-4 py-2 text-sm font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        class="subscribe-btn px-4 py-2 text-sm font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        style="background: #A855F7; color: white;"
+        onmouseenter="this.style.background='#9333EA'"
+        onmouseleave="this.style.background='#A855F7'"
       >
         <span class="btn-text">订阅</span>
         <span class="btn-loading hidden">...</span>
@@ -50,9 +56,13 @@ const BUTTONDOWN_URL = 'https://buttondown.email/api/emails/embed-subscribe/roll
   </div>
 ) : (
   <!-- Full version for dedicated section -->
-  <div class="subscribe-container bg-[var(--bg-secondary)] rounded-2xl p-8 md:p-12" data-compact="false">
-    <h3 class="text-2xl font-serif font-semibold mb-3">订阅更新</h3>
-    <p class="text-[var(--text-secondary)] mb-6 max-w-md">
+  <div
+    class="subscribe-container rounded-2xl p-8 md:p-12"
+    data-compact="false"
+    style="background: #111111; border-top: 1px solid transparent; border-image: linear-gradient(to right, transparent, #333, transparent) 1;"
+  >
+    <h3 class="text-2xl font-semibold mb-3 text-white" style="font-family: var(--font-display) !important;">订阅更新</h3>
+    <p class="text-[#a3a3a3] mb-6 max-w-md">
       获取最新的技术文章、项目更新和思考分享。没有垃圾邮件，随时取消订阅。
     </p>
     <form
@@ -64,11 +74,17 @@ const BUTTONDOWN_URL = 'https://buttondown.email/api/emails/embed-subscribe/roll
         name="email"
         placeholder="your@email.com"
         required
-        class="flex-1 px-4 py-3 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:border-[var(--text-primary)] transition-colors"
+        class="flex-1 px-4 py-3 rounded-lg focus:outline-none transition-colors"
+        style="background: #0a0a0a; border: 1px solid #333; color: white;"
+        onfocus="this.style.borderColor='#A855F7'"
+        onblur="this.style.borderColor='#333'"
       />
       <button
         type="submit"
-        class="subscribe-btn px-6 py-3 font-medium bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        class="subscribe-btn px-6 py-3 font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        style="background: #A855F7; color: white;"
+        onmouseenter="this.style.background='#9333EA'"
+        onmouseleave="this.style.background='#A855F7'"
       >
         <span class="btn-text">订阅</span>
         <span class="btn-loading hidden">...</span>
