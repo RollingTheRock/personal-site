@@ -225,7 +225,98 @@ import EntryCards from '../components/EntryCards.astro';
 - [homepage-redesign-2026-02-17.md](./homepage-redesign-2026-02-17.md)
 - [homepage-development-journey.md](./homepage-development-journey.md)
 
+## 复古未来主义风格优化
+
+### SVG 噪点纹理技术
+
+使用 SVG `feTurbulence` 滤镜生成程序化噪点纹理：
+
+```css
+/* 画框容器噪点 */
+.entry-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* 图片噪点叠加 */
+.entry-image-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,...");
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: overlay;
+}
+```
+
+**参数说明**：
+- `baseFrequency='0.9'` - 高频噪点，产生细腻颗粒感
+- `numOctaves='4'` - 八度数，增加噪点复杂度
+- `stitchTiles='stitch'` - 无缝平铺
+- `mix-blend-mode: overlay` - 与图片融合
+
+### 字体搭配策略
+
+| 元素 | 字体 | 用途 |
+|------|------|------|
+| 标题 | Cormorant Garamond | 优雅衬线体，与 Hero 区域一致 |
+| 描述 | Courier New | 等宽字体，增加技术感 |
+
+```css
+.entry-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif !important;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.entry-desc {
+  font-family: 'Courier New', 'SF Mono', monospace;
+  font-size: 13px;
+  color: #525252;
+  letter-spacing: 0.08em;
+}
+```
+
+### 品牌色装饰线
+
+左侧竖线装饰增强视觉层次：
+
+```css
+.entry-info {
+  padding-left: 16px;
+  border-left: 2px solid transparent;
+}
+
+.entry-blog .entry-info { border-left-color: #7C3AED; }
+.entry-projects .entry-info { border-left-color: #0891B2; }
+.entry-videos .entry-info { border-left-color: #EA580C; }
+
+/* hover 时变亮 */
+.entry-blog:hover .entry-info { border-left-color: #A855F7; }
+```
+
+### 内发光边框效果
+
+Hover 时添加内阴影营造发光感：
+
+```css
+.entry-blog:hover .entry-frame {
+  border-color: rgba(124, 58, 237, 0.3);
+  box-shadow:
+    0 12px 40px rgba(124, 58, 237, 0.12),
+    inset 0 0 0 1px rgba(124, 58, 237, 0.08);
+}
+```
+
 ## 提交记录
 
 - `c8d1bbc` - feat: 替换邮票卡片为画框式设计
 - `57993b6` - refactor: 优化 EntryCards 性能和可访问性
+- `8d17ce0` - style: 入口卡片复古未来主义风格优化
