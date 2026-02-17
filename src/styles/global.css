@@ -9,11 +9,12 @@
   font-display: swap;
 }
 
-/* 中文衬线体 - Noto Serif SC */
+/* 中文字体 - 得意黑 (Smiley Sans) */
 @font-face {
-  font-family: 'Noto Serif SC';
-  src: url('/fonts/NotoSerifSC-Bold.otf') format('opentype');
-  font-weight: 700;
+  font-family: 'Smiley Sans';
+  src: url('/fonts/SmileySans-Oblique.woff2') format('woff2'),
+       url('/fonts/SmileySans-Oblique.ttf') format('truetype');
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
@@ -35,12 +36,12 @@
     --accent: #1A1A1A;
 
     /* 字体 */
-    --font-serif: 'Playfair Display', 'Noto Serif SC', Georgia, 'SimSun', serif;
+    --font-serif: 'Playfair Display', 'Smiley Sans', Georgia, 'SimSun', sans-serif;
     --font-sans: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --font-mono: 'Fira Code', 'Source Code Pro', Consolas, monospace;
 
     /* 字体变量 - 按用途 */
-    --font-display: 'Playfair Display', 'Noto Serif SC', Georgia, 'SimSun', serif;
+    --font-display: 'Playfair Display', 'Smiley Sans', Georgia, 'SimSun', sans-serif;
     --font-body: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   }
 
