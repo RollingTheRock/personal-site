@@ -3,7 +3,6 @@ title: "个人博客系统"
 description: "基于 Astro 搭建的复古未来主义个人博客，融合素描质感配图体系与品牌色系统，注重排版美学与阅读体验"
 date: 2026-01-18
 image: "/assets/images/project-personal-blog.jpg"
-github: ""
 demo: "https://rollingtherock.blog"
 tech: ["Astro", "Tailwind CSS", "TypeScript", "Responsive Design"]
 featured: true
