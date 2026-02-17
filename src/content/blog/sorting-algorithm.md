@@ -2,6 +2,7 @@
 title: 排序的隐藏维度：从"会排序"到"会用排序"的思维跃迁
 description: 一篇关于算法竞赛中排序技巧的系统性总结，从识别信号到设计策略，帮助你掌握排序在竞赛中的精髓。
 date: 2026-01-23
+image: /assets/images/blog-排序的隐藏维度.jpg
 categories:
   - ACM
   - 基础算法

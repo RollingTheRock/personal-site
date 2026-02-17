@@ -11,7 +11,7 @@ const featuredPosts = {
     description: '一篇关于算法竞赛中排序技巧的系统性总结，从识别信号到设计策略。',
     date: '2026年1月23日',
     tags: ['#ACM', '#算法'],
-    gradient: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)',
+    image: '/assets/images/blog-排序的隐藏维度.jpg',
     tag: '技术'
   },
   side: [
@@ -19,14 +19,14 @@ const featuredPosts = {
       title: '数据不会死',
       description: '关于数据、记忆和遗忘的思考。',
       date: '2026年1月20日',
-      gradient: 'linear-gradient(135deg, #0891B2 0%, #06B6D4 100%)',
+      image: '/assets/images/blog-数据不会死.jpg',
       tag: '思考'
     },
     {
       title: '欢迎来到我的博客',
       description: '一个记录技术、思考和成长的地方。',
       date: '2026年1月18日',
-      gradient: 'linear-gradient(135deg, #EA580C 0%, #F97316 100%)',
+      image: '/assets/images/blog-欢迎来到我的博客.jpg',
       tag: '生活'
     }
   ]
@@ -52,8 +52,12 @@ const featuredPosts = {
       <article class="post-card post-card--large group rounded-2xl overflow-hidden card-premium hover:-translate-y-1 transition-all duration-300">
         <div
           class="post-image h-[200px] relative flex items-start justify-start p-6 overflow-hidden"
-          style={`background: ${featuredPosts.main.gradient}`}
         >
+          <img
+            src={featuredPosts.main.image}
+            alt={featuredPosts.main.title}
+            class="absolute inset-0 w-full h-full object-cover"
+          />
           <!-- Diagonal decorative line -->
           <div class="absolute inset-0 pointer-events-none">
             <div
@@ -96,8 +100,12 @@ const featuredPosts = {
           <article class="post-card post-card--small group rounded-2xl overflow-hidden card-premium hover:-translate-y-1 transition-all duration-300">
             <div
               class="post-image h-[120px] relative flex items-start justify-start p-4 overflow-hidden"
-              style={`background: ${post.gradient}`}
             >
+              <img
+                src={post.image}
+                alt={post.title}
+                class="absolute inset-0 w-full h-full object-cover"
+              />
               <!-- Diagonal decorative line -->
               <div class="absolute inset-0 pointer-events-none">
                 <div

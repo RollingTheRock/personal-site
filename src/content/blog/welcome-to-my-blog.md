@@ -2,6 +2,7 @@
 title: 欢迎来到我的博客
 description: 这是我的新博客，一个记录技术、思考和成长的地方。
 date: 2026-01-18
+image: /assets/images/blog-欢迎来到我的博客.jpg
 categories:
   - 生活
   - 随笔

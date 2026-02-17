@@ -2,6 +2,7 @@
 title: 数据不会死
 description: 关于数据、记忆和遗忘的思考。数据不会因为被遗忘而消失，它只是在等待被重新发现。
 date: 2026-01-20
+image: /assets/images/blog-数据不会死.jpg
 categories:
   - 思考
   - 技术
