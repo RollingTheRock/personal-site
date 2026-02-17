@@ -9,7 +9,7 @@ const { avatarSrc = '/avatar.jpg' } = Astro.props;
 <section class="pt-8 pb-16 md:pb-[64px]">
   <div class="container-narrow text-center">
     <!-- Avatar with decorative layer -->
-    <div class="mb-8 opacity-0-init animate-scale-in delay-200">
+    <div class="mb-10 opacity-0-init animate-scale-in delay-200">
       <div class="relative inline-block">
         <!-- Decorative background layer - vintage texture -->
         <div
@@ -48,46 +48,113 @@ const { avatarSrc = '/avatar.jpg' } = Astro.props;
       </div>
     </div>
 
-    <!-- Intro Text - Three Layers -->
-    <div class="space-y-0">
-      <!-- Layer 1: Main Title -->
-      <p
-        class="opacity-0-init animate-fade-in-down delay-300"
-        style="
-          font-family: var(--font-display) !important;
-          font-size: clamp(1.5rem, 4vw, 2.5rem);
-          font-weight: 700;
-          color: #ffffff;
-          margin-bottom: 16px;
-        "
+    <!-- Tagline -->
+    <div class="mb-10 opacity-0-init animate-fade-in-down delay-400">
+      <h1
+        class="hero-tagline text-2xl md:text-3xl lg:text-4xl leading-relaxed text-[var(--text-primary)]"
       >
-        一名热爱技术的开发者
-      </p>
+        "Code Is the Answer. But I'm More Interested in the Question."
+      </h1>
+    </div>
 
-      <!-- Layer 2: Subtitle (Brand Purple) -->
-      <p
-        class="opacity-0-init animate-fade-in-down delay-400"
+    <!-- Subscribe Button with Gradient Border -->
+    <div class="opacity-0-init animate-fade-in-down delay-600">
+      <button
+        id="hero-subscribe-btn"
+        type="button"
+        class="relative inline-flex items-center justify-center px-8 py-3 text-base font-medium text-[var(--text-primary)] transition-all duration-300 rounded-full group"
         style="
-          font-size: clamp(1rem, 2vw, 1.25rem);
-          color: #A855F7;
-          font-weight: 500;
-          margin-bottom: 12px;
+          background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(6, 182, 212, 0.1));
         "
       >
-        探索技术，分享思考，记录成长
-      </p>
+        <!-- Gradient border -->
+        <span
+          class="absolute inset-0 rounded-full p-[2px]"
+          style="background: linear-gradient(135deg, #A855F7, #06B6D4);"
+        >
+          <span class="absolute inset-[2px] rounded-full bg-[var(--bg-primary)]"></span>
+        </span>
+        <span class="relative z-10 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          Subscribe
+        </span>
+      </button>
+    </div>
 
-      <!-- Layer 3: Description -->
-      <p
-        class="opacity-0-init animate-fade-in-down delay-500"
-        style="
-          font-size: 16px;
-          color: #a3a3a3;
-          margin-bottom: 32px;
-        "
+    <!-- Expandable Subscribe Form -->
+    <div
+      id="hero-subscribe-form"
+      class="max-w-md mx-auto mt-6 overflow-hidden transition-all duration-500 ease-out opacity-0 max-h-0"
+    >
+      <form
+        class="flex flex-col sm:flex-row gap-3"
+        onsubmit="event.preventDefault(); handleHeroSubscribe(event);"
       >
-        这里记录我的学习历程、项目实践和技术思考。
+        <input
+          type="email"
+          name="email"
+          placeholder="your@email.com"
+          required
+          class="flex-1 px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#A855F7] transition-colors"
+        />
+        <button
+          type="submit"
+          class="px-6 py-3 bg-gradient-to-r from-[#A855F7] to-[#06B6D4] text-[var(--bg-primary)] font-medium rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
+        >
+          订阅
+        </button>
+      </form>
+      <p class="mt-3 text-xs text-[#666666]">
+        订阅即表示同意接收更新邮件，可随时取消订阅。
       </p>
     </div>
   </div>
 </section>
+
+<script is:inline>
+  // Toggle subscribe form
+  document.addEventListener('DOMContentLoaded', function() {
+    const subscribeBtn = document.getElementById('hero-subscribe-btn');
+    const subscribeForm = document.getElementById('hero-subscribe-form');
+
+    if (subscribeBtn && subscribeForm) {
+      subscribeBtn.addEventListener('click', function() {
+        const isExpanded = subscribeForm.classList.contains('opacity-100');
+
+        if (isExpanded) {
+          subscribeForm.classList.remove('opacity-100', 'max-h-48');
+          subscribeForm.classList.add('opacity-0', 'max-h-0');
+        } else {
+          subscribeForm.classList.remove('opacity-0', 'max-h-0');
+          subscribeForm.classList.add('opacity-100', 'max-h-48');
+          // Focus on email input after animation
+          setTimeout(() => {
+            const emailInput = subscribeForm.querySelector('input[type="email"]');
+            if (emailInput) emailInput.focus();
+          }, 300);
+        }
+      });
+    }
+  });
+
+  // Handle subscribe form submission
+  function handleHeroSubscribe(event) {
+    const form = event.target;
+    const email = form.email.value;
+
+    // TODO: Implement actual subscription logic
+    // For now, show a success message
+    alert('感谢订阅！我们会将最新内容发送到 ' + email);
+    form.reset();
+
+    // Collapse form after submission
+    const subscribeForm = document.getElementById('hero-subscribe-form');
+    if (subscribeForm) {
+      subscribeForm.classList.remove('opacity-100', 'max-h-48');
+      subscribeForm.classList.add('opacity-0', 'max-h-0');
+    }
+  }
+</script>

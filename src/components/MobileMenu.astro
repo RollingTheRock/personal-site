@@ -1,30 +1,30 @@
 ---
 const navItems = [
-  { href: '/', label: '🏠 首页' },
-  { href: '/blog', label: '📝 博客' },
-  { href: '/projects', label: '💼 项目' },
-  { href: '/videos', label: '🎥 视频' },
-  { href: '/about', label: '👤 关于' },
+  { href: '/', label: '首页' },
+  { href: '/blog', label: '博客' },
+  { href: '/projects', label: '项目' },
+  { href: '/videos', label: '视频' },
+  { href: '/about', label: '关于' },
 ];
 ---
 
-<!-- Mobile Menu Overlay -->
+<!-- Mobile Menu Overlay with backdrop blur -->
 <div
   id="menu-overlay"
-  class="fixed inset-0 bg-black/60 z-[999] opacity-0 pointer-events-none transition-opacity duration-300"
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999] opacity-0 pointer-events-none transition-opacity duration-300"
   onclick="window.closeMobileMenu()"
 >
 </div>
 
-<!-- Mobile Menu Panel -->
+<!-- Mobile Menu Panel - Slides from left -->
 <aside
   id="mobile-menu-panel"
-  class="fixed top-0 right-0 w-[300px] h-screen z-[1000] transform translate-x-full transition-transform duration-300 ease-out"
-  style="background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px);"
+  class="fixed top-0 left-0 w-[300px] h-screen z-[1000] transform -translate-x-full transition-transform duration-300 ease-out"
+  style="background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);"
 >
   <div class="flex flex-col h-full">
     <!-- Close button -->
-    <div class="flex justify-end p-5">
+    <div class="flex justify-start p-5">
       <button
         type="button"
         onclick="window.closeMobileMenu()"
@@ -40,12 +40,12 @@ const navItems = [
 
     <!-- Navigation Links -->
     <nav class="flex-1 px-6">
-      <ul class="space-y-1">
+      <ul class="space-y-2">
         {navItems.map((item) => (
           <li>
             <a
               href={item.href}
-              class="block py-3 text-lg leading-[56px] text-white/80 hover:text-[#A855F7] transition-colors"
+              class="block py-3 text-lg font-medium text-white/90 hover:text-[#A855F7] transition-colors"
               onclick="window.closeMobileMenu()"
             >
               {item.label}
@@ -85,7 +85,7 @@ const navItems = [
     const overlay = document.getElementById('menu-overlay');
 
     if (panel && overlay) {
-      panel.classList.remove('translate-x-full');
+      panel.classList.remove('-translate-x-full');
       overlay.classList.remove('opacity-0', 'pointer-events-none');
       document.body.style.overflow = 'hidden';
     }
@@ -96,7 +96,7 @@ const navItems = [
     const overlay = document.getElementById('menu-overlay');
 
     if (panel && overlay) {
-      panel.classList.add('translate-x-full');
+      panel.classList.add('-translate-x-full');
       overlay.classList.add('opacity-0', 'pointer-events-none');
       document.body.style.overflow = '';
     }

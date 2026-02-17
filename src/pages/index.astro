@@ -5,32 +5,35 @@ import HeroSection from '../components/HeroSection.astro';
 import CategoryCards from '../components/CategoryCards.astro';
 import FeaturedPosts from '../components/FeaturedPosts.astro';
 import FeaturedProjects from '../components/FeaturedProjects.astro';
-import Subscribe from '../components/Subscribe.astro';
 import MobileMenu from '../components/MobileMenu.astro';
 ---
 
 <BaseLayout noHeader={true} noFooter={false}>
   <div class="min-h-screen flex flex-col">
-    <!-- Header with Centered Logo and Absolute Positioned Menu Button -->
-    <header class="relative w-full pt-12 pb-16 opacity-0-init animate-fade-in-down">
-      <div class="container-wide flex items-center justify-center">
+    <!-- Header with Left Hamburger Menu and Centered Logo -->
+    <header class="relative w-full pt-12 pb-6 opacity-0-init animate-fade-in-down">
+      <div class="container-wide relative flex items-center justify-center">
+        <!-- Hamburger menu button - absolute positioned left -->
+        <button
+          type="button"
+          class="absolute left-0 p-2 text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+          aria-label="打开菜单"
+          onclick="window.openMobileMenu()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Centered Logo -->
         <Logo />
       </div>
-
-      <!-- Hamburger menu button - absolute positioned -->
-      <button
-        type="button"
-        class="absolute right-6 lg:right-8 top-1/2 -translate-y-1/2 p-2 text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
-        aria-label="打开菜单"
-        onclick="window.openMobileMenu()"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
     </header>
+
+    <!-- Full-width Divider -->
+    <div class="w-full border-b border-[var(--border-color)]"></div>
 
     <!-- Mobile Menu -->
     <MobileMenu />
@@ -38,23 +41,33 @@ import MobileMenu from '../components/MobileMenu.astro';
     <!-- Main Content -->
     <main class="flex-1 page-transition">
       <!-- Hero Section -->
-      <HeroSection />
+      <div class="pt-8">
+        <HeroSection />
+      </div>
+
+      <!-- Divider between Hero and Cards -->
+      <div class="container-wide">
+        <div class="border-b border-[var(--border-color)]"></div>
+      </div>
 
       <!-- Category Cards -->
       <CategoryCards class="pt-16" />
 
+      <!-- Divider between Cards and Featured Blog -->
+      <div class="container-wide">
+        <div class="border-b border-[var(--border-color)] mt-16"></div>
+      </div>
+
       <!-- Featured Posts -->
-      <FeaturedPosts class="pt-24" />
+      <FeaturedPosts class="pt-16" />
+
+      <!-- Divider between Featured Blog and Featured Projects -->
+      <div class="container-wide">
+        <div class="border-b border-[var(--border-color)] mt-16"></div>
+      </div>
 
       <!-- Featured Projects -->
-      <FeaturedProjects />
-
-      <!-- Subscribe Section -->
-      <section class="py-20 md:py-[80px] border-t border-[#262626] opacity-0-init animate-slide-up delay-800">
-        <div class="container-narrow">
-          <Subscribe showPrivacy={true} />
-        </div>
-      </section>
+      <FeaturedProjects class="pt-16" />
     </main>
   </div>
 </BaseLayout>

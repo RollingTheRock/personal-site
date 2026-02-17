@@ -1,3 +1,6 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap');
+
 /* 本地字体加载 - @font-face 定义 */
 
 /* 英文衬线体 - Playfair Display */
@@ -46,10 +49,12 @@
     --font-serif: 'Playfair Display', 'Noto Sans SC', Georgia, 'SimSun', sans-serif;
     --font-sans: 'Noto Sans SC', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --font-mono: 'Fira Code', 'Source Code Pro', Consolas, monospace;
+    --font-tagline: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
 
     /* 字体变量 - 按用途 */
     --font-display: 'Playfair Display', 'Noto Sans SC', sans-serif;
     --font-body: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+    --font-hero-tagline: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   }
 
   [data-theme="dark"] {
@@ -483,6 +488,14 @@
   .logo {
     font-family: var(--font-display) !important;
     font-weight: 900 !important;
+  }
+
+  /* Hero Tagline - Cormorant Garamond */
+  .hero-tagline {
+    font-family: var(--font-hero-tagline) !important;
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: 0.02em;
   }
 
   /* 主标题 - 用 900 超粗 */
