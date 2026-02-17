@@ -1,0 +1,183 @@
+---
+---
+
+<section class="stamps-section">
+  <div class="stamps-container">
+    <a href="/blog" class="stamp stamp-blog" style="--default-rotation: -6deg;">
+      <img src="/assets/images/stamp-blog.png" alt="Blog">
+    </a>
+    <a href="/projects" class="stamp stamp-projects" style="--default-rotation: 4deg;">
+      <img src="/assets/images/stamp-projects.png" alt="Projects">
+    </a>
+    <a href="/videos" class="stamp stamp-videos" style="--default-rotation: -3deg;">
+      <img src="/assets/images/stamp-videos.png" alt="Videos">
+    </a>
+  </div>
+</section>
+
+<script is:inline>
+  // 入场动画 - 使用 Intersection Observer 当邮票滚入视口时触发
+  const stampsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const stamps = entry.target.querySelectorAll('.stamp');
+        stamps.forEach(stamp => {
+          stamp.classList.add('animate-in');
+        });
+        stampsObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.2 });
+
+  const stampsSection = document.querySelector('.stamps-section');
+  if (stampsSection) {
+    stampsObserver.observe(stampsSection);
+  }
+</script>
+
+<style>
+  .stamps-section {
+    padding: 60px 0 80px;
+  }
+
+  .stamps-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    perspective: 1000px;
+  }
+
+  /* 每张邮票 */
+  .stamp {
+    display: block;
+    width: 260px;
+    flex-shrink: 0;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    /* 初始状态：隐藏，用于入场动画 */
+    opacity: 0;
+    transform: rotate(var(--default-rotation)) translateY(30px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .stamp.animate-in {
+    opacity: 1;
+    transform: rotate(var(--default-rotation)) translateY(0);
+  }
+
+  /* 三张邮票交错出现的延迟 */
+  .stamp-blog.animate-in {
+    transition-delay: 0.1s;
+  }
+
+  .stamp-projects.animate-in {
+    transition-delay: 0.25s;
+  }
+
+  .stamp-videos.animate-in {
+    transition-delay: 0.4s;
+  }
+
+  .stamp img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+    transition: filter 0.5s ease;
+  }
+
+  /* 各张邮票的默认倾斜角度和位置 */
+  .stamp-blog {
+    transform: rotate(-6deg) translateY(30px);
+  }
+
+  .stamp-blog.animate-in {
+    transform: rotate(-6deg) translateY(0);
+  }
+
+  .stamp-projects {
+    transform: rotate(4deg) translateY(30px);
+    margin-top: 20px;  /* 高低错落感 */
+  }
+
+  .stamp-projects.animate-in {
+    transform: rotate(4deg) translateY(0);
+  }
+
+  .stamp-videos {
+    transform: rotate(-3deg) translateY(30px);
+    margin-top: -10px;  /* 高低错落感 */
+  }
+
+  .stamp-videos.animate-in {
+    transform: rotate(-3deg) translateY(0);
+  }
+
+  /* ===== Hover 效果：摆正 + 放大 + 浮起 ===== */
+
+  .stamp:hover {
+    transform: rotate(0deg) scale(1.1) translateY(-12px) !important;
+    z-index: 10;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+  }
+
+  /* 当某张邮票被 hover 时，其他邮票退后变暗 */
+  .stamps-container:hover .stamp:not(:hover) {
+    opacity: 0.5;
+    filter: brightness(0.6);
+    transform: rotate(var(--default-rotation)) scale(0.95) translateY(0) !important;
+  }
+
+  /* 每张邮票底部添加微妙的品牌色投影 */
+  .stamp-blog:hover {
+    filter: drop-shadow(0 20px 40px rgba(124, 58, 237, 0.4));
+  }
+
+  .stamp-projects:hover {
+    filter: drop-shadow(0 20px 40px rgba(8, 145, 178, 0.4));
+  }
+
+  .stamp-videos:hover {
+    filter: drop-shadow(0 20px 40px rgba(234, 88, 12, 0.4));
+  }
+
+  /* ===== 移动端适配 ===== */
+
+  @media (max-width: 768px) {
+    .stamps-container {
+      flex-direction: column;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .stamp {
+      width: 220px;
+      transform: rotate(0deg) translateY(30px) !important;
+      margin-top: 0 !important;
+    }
+
+    .stamp.animate-in {
+      transform: rotate(0deg) translateY(0) !important;
+    }
+
+    .stamp:hover {
+      transform: scale(1.05) translateY(-8px) !important;
+    }
+
+    .stamps-container:hover .stamp:not(:hover) {
+      opacity: 0.7;
+      transform: scale(1) translateY(0) !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stamp {
+      width: 200px;
+    }
+  }
+</style>
