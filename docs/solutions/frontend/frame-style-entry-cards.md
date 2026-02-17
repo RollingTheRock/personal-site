@@ -302,16 +302,57 @@ import EntryCards from '../components/EntryCards.astro';
 .entry-blog:hover .entry-info { border-left-color: #A855F7; }
 ```
 
-### 内发光边框效果
+### 画框深度质感
+
+使用径向渐变和多层阴影营造立体画框效果：
+
+```css
+.entry-frame {
+  background: radial-gradient(ellipse at center, #161616 0%, #0f0f0f 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 14px 14px 20px 14px;
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+}
+```
+
+**效果说明**：
+- 径向渐变：中间稍亮，四角更暗（暗角效果）
+- 底部 padding 加大：营造底座感
+- 内阴影：图片看起来"嵌入"画框
+- 底部微亮线：模拟光照边缘
+- 外阴影：画框整体浮起感
+
+### 图片内嵌效果
+
+```css
+.entry-image-wrapper {
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+```
+
+### 画框底部品牌色微光
+
+```css
+.entry-blog .entry-frame {
+  border-bottom-color: rgba(124, 58, 237, 0.12);
+}
+```
+
+### Hover 发光效果
 
 Hover 时添加内阴影营造发光感：
 
 ```css
 .entry-blog:hover .entry-frame {
-  border-color: rgba(124, 58, 237, 0.3);
+  border-color: rgba(124, 58, 237, 0.25);
   box-shadow:
-    0 12px 40px rgba(124, 58, 237, 0.12),
-    inset 0 0 0 1px rgba(124, 58, 237, 0.08);
+    inset 0 2px 10px rgba(0, 0, 0, 0.4),
+    inset 0 -1px 0 rgba(124, 58, 237, 0.08),
+    0 8px 32px rgba(124, 58, 237, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.3);
 }
 ```
 
@@ -320,3 +361,4 @@ Hover 时添加内阴影营造发光感：
 - `c8d1bbc` - feat: 替换邮票卡片为画框式设计
 - `57993b6` - refactor: 优化 EntryCards 性能和可访问性
 - `8d17ce0` - style: 入口卡片复古未来主义风格优化
+- `f42824b` - style: 优化入口卡片画框质感（深度、厚度、内嵌感）
