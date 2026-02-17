@@ -9,11 +9,19 @@
   font-display: swap;
 }
 
-/* 中文字体 - 站酷小薇体 (ZCOOL XiaoWei) */
+/* 中文字体 - 思源黑体 (Noto Sans SC) */
 @font-face {
-  font-family: 'ZCOOL XiaoWei';
-  src: url('/fonts/ZCOOLXiaoWei-Regular.woff2') format('woff2');
-  font-weight: normal;
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/NotoSansSC-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/NotoSansSC-Bold.woff2') format('woff2');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -35,13 +43,13 @@
     --accent: #1A1A1A;
 
     /* 字体 */
-    --font-serif: 'Playfair Display', 'ZCOOL XiaoWei', Georgia, 'SimSun', serif;
-    --font-sans: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-serif: 'Playfair Display', 'Noto Sans SC', Georgia, 'SimSun', sans-serif;
+    --font-sans: 'Noto Sans SC', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --font-mono: 'Fira Code', 'Source Code Pro', Consolas, monospace;
 
     /* 字体变量 - 按用途 */
-    --font-display: 'Playfair Display', 'ZCOOL XiaoWei', Georgia, 'SimSun', serif;
-    --font-body: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-display: 'Playfair Display', 'Noto Sans SC', sans-serif;
+    --font-body: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
   }
 
   [data-theme="dark"] {
@@ -415,8 +423,9 @@
   .section-title-premium {
     font-family: var(--font-display);
     font-size: 32px;
-    font-weight: 700;
+    font-weight: 900;
     color: #ffffff;
+    letter-spacing: 0.05em;
   }
 
   .section-title-premium::before {
@@ -456,5 +465,49 @@
       padding: 0 20px;
       max-width: 100%;
     }
+  }
+
+  /* 思源黑体字重样式 */
+  .font-black {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em;
+  }
+
+  .font-bold {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
+  }
+
+  /* Logo - 英文走 Playfair Display */
+  .logo {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+  }
+
+  /* 主标题 - 用 900 超粗 */
+  .hero-title {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em;
+  }
+
+  /* 区域标题 - 用 900 超粗 */
+  .section-header h2 {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em;
+  }
+
+  /* 卡片标题 - 用 700 粗体 */
+  .card-title {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
+  }
+
+  /* 文章标题 - 用 700 */
+  .post-card h3 {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
   }
 }
