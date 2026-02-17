@@ -9,11 +9,10 @@
   font-display: swap;
 }
 
-/* 中文字体 - 得意黑 (Smiley Sans) */
+/* 中文字体 - 站酷小薇体 (ZCOOL XiaoWei) */
 @font-face {
-  font-family: 'Smiley Sans';
-  src: url('/fonts/SmileySans-Oblique.woff2') format('woff2'),
-       url('/fonts/SmileySans-Oblique.ttf') format('truetype');
+  font-family: 'ZCOOL XiaoWei';
+  src: url('/fonts/ZCOOLXiaoWei-Regular.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -36,12 +35,12 @@
     --accent: #1A1A1A;
 
     /* 字体 */
-    --font-serif: 'Playfair Display', 'Smiley Sans', Georgia, 'SimSun', sans-serif;
+    --font-serif: 'Playfair Display', 'ZCOOL XiaoWei', Georgia, 'SimSun', serif;
     --font-sans: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --font-mono: 'Fira Code', 'Source Code Pro', Consolas, monospace;
 
     /* 字体变量 - 按用途 */
-    --font-display: 'Playfair Display', 'Smiley Sans', Georgia, 'SimSun', sans-serif;
+    --font-display: 'Playfair Display', 'ZCOOL XiaoWei', Georgia, 'SimSun', serif;
     --font-body: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   }
 
