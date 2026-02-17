@@ -2,7 +2,7 @@
 title: "AI 日报邮件系统"
 description: "自动收集 AI 领域最新论文、博客和新闻，每日发送摘要邮件"
 date: 2026-02-01
-image: "/images/projects/ai-daily-digest.jpg"
+image: "/assets/images/project-ai-daily.jpg"
 github: "https://github.com/RollingTheRock/ai-daily-digest"
 demo: "https://github.com/RollingTheRock/ai-daily-digest"
 tech: ["Python", "GitHub Actions", "SMTP"]

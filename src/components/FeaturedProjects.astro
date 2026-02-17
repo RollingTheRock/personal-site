@@ -1,7 +1,7 @@
 ---
 const projects = [
   {
-    icon: '🤖',
+    image: '/assets/images/project-ai-daily.jpg',
     title: 'AI 日报邮件系统',
     description: '自动收集 AI 领域最新论文、博客和新闻，每日发送摘要邮件',
     tags: ['Python', 'GitHub Actions', 'SMTP'],
@@ -46,7 +46,17 @@ const projects = [
             border-image: linear-gradient(to bottom, #06B6D4, #A855F7) 1;
           "
         >
-          <div class="project-icon text-5xl mb-4">{project.icon}</div>
+          {project.image ? (
+            <div class="aspect-video rounded-lg overflow-hidden mb-4">
+              <img
+                src={project.image}
+                alt={project.title}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div class="project-icon text-5xl mb-4">{project.icon}</div>
+          )}
 
           <h3 class="text-xl font-bold text-white mb-3 group-hover:text-[#06B6D4] transition-colors">
             {project.title}
