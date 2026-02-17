@@ -115,15 +115,19 @@
 
   /* ===== 画框容器 ===== */
   .entry-frame {
-    background: #141414;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: radial-gradient(ellipse at center, #161616 0%, #0f0f0f 100%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 4px;
-    padding: 12px;
+    padding: 14px 14px 20px 14px;
     transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
                 border-color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
                 box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     overflow: hidden;
     position: relative;
+    box-shadow:
+      inset 0 2px 10px rgba(0, 0, 0, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+      0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   /* 画框容器噪点纹理 */
@@ -137,12 +141,26 @@
     z-index: 0;
   }
 
+  /* 画框底部边缘品牌色微光 */
+  .entry-blog .entry-frame {
+    border-bottom-color: rgba(124, 58, 237, 0.12);
+  }
+
+  .entry-projects .entry-frame {
+    border-bottom-color: rgba(8, 145, 178, 0.12);
+  }
+
+  .entry-videos .entry-frame {
+    border-bottom-color: rgba(234, 88, 12, 0.12);
+  }
+
   /* ===== 图片 ===== */
   .entry-image-wrapper {
-    overflow: hidden;
-    border-radius: 2px;
     position: relative;
     z-index: 1;
+    overflow: hidden;
+    border-radius: 2px;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.4);
   }
 
   /* 图片噪点纹理叠加 */
@@ -271,24 +289,30 @@
   }
 
   .entry-blog:hover .entry-frame {
-    border-color: rgba(124, 58, 237, 0.3);
+    border-color: rgba(124, 58, 237, 0.25);
     box-shadow:
-      0 12px 40px rgba(124, 58, 237, 0.12),
-      inset 0 0 0 1px rgba(124, 58, 237, 0.08);
+      inset 0 2px 10px rgba(0, 0, 0, 0.4),
+      inset 0 -1px 0 rgba(124, 58, 237, 0.08),
+      0 8px 32px rgba(124, 58, 237, 0.15),
+      0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .entry-projects:hover .entry-frame {
-    border-color: rgba(8, 145, 178, 0.3);
+    border-color: rgba(8, 145, 178, 0.25);
     box-shadow:
-      0 12px 40px rgba(8, 145, 178, 0.12),
-      inset 0 0 0 1px rgba(8, 145, 178, 0.08);
+      inset 0 2px 10px rgba(0, 0, 0, 0.4),
+      inset 0 -1px 0 rgba(8, 145, 178, 0.08),
+      0 8px 32px rgba(8, 145, 178, 0.15),
+      0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .entry-videos:hover .entry-frame {
-    border-color: rgba(234, 88, 12, 0.3);
+    border-color: rgba(234, 88, 12, 0.25);
     box-shadow:
-      0 12px 40px rgba(234, 88, 12, 0.12),
-      inset 0 0 0 1px rgba(234, 88, 12, 0.08);
+      inset 0 2px 10px rgba(0, 0, 0, 0.4),
+      inset 0 -1px 0 rgba(234, 88, 12, 0.08),
+      0 8px 32px rgba(234, 88, 12, 0.15),
+      0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   /* 图片：去灰 + 微妙放大 */
