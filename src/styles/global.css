@@ -1,4 +1,22 @@
-/* Google Fonts loaded via link in BaseLayout.astro for better performance */
+/* 本地字体加载 - @font-face 定义 */
+
+/* 英文衬线体 - Playfair Display */
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('/fonts/PlayfairDisplay-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 中文衬线体 - Noto Serif SC */
+@font-face {
+  font-family: 'Noto Serif SC';
+  src: url('/fonts/NotoSerifSC-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -18,12 +36,12 @@
 
     /* 字体 */
     --font-serif: 'Playfair Display', 'Noto Serif SC', Georgia, 'SimSun', serif;
-    --font-sans: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font-sans: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'Fira Code', 'Source Code Pro', Consolas, monospace;
 
     /* 字体变量 - 按用途 */
     --font-display: 'Playfair Display', 'Noto Serif SC', Georgia, 'SimSun', serif;
-    --font-body: 'Inter', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-body: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   }
 
   [data-theme="dark"] {
