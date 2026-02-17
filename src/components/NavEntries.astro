@@ -164,11 +164,12 @@
 
   /* ===== 图片 ===== */
   .nav-row-image {
-    width: 200px;
-    height: 200px;
+    width: 260px;
+    height: 260px;
     flex-shrink: 0;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
+    border-radius: 50%;
   }
 
   .nav-row-image img {
@@ -178,17 +179,24 @@
     display: block;
     filter: grayscale(20%) brightness(0.9);
     transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    -webkit-mask-image: url('/assets/images/ink-mask.png');
-    mask-image: url('/assets/images/ink-mask.png');
-    -webkit-mask-size: 120% 120%;
-    mask-size: 120% 120%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center center;
-    mask-position: center center;
-    /* 确保 mask 模式正确 */
-    -webkit-mask-mode: alpha;
-    mask-mode: alpha;
+  }
+
+  /* 渐变消融遮罩 */
+  .nav-row-image::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 35%,
+      rgba(10, 10, 10, 0.3) 50%,
+      rgba(10, 10, 10, 0.7) 65%,
+      rgba(10, 10, 10, 1) 80%
+    );
+    pointer-events: none;
+    z-index: 1;
+    transition: background 0.6s ease;
   }
 
   /* ===== 文字区域 ===== */
@@ -260,15 +268,24 @@
     opacity: 1;
   }
 
-  /* 图片：去灰 + 变亮 + 放大 + mask 扩大 */
+  /* 图片：去灰 + 变亮 + 微放大 */
   .nav-row:hover .nav-row-image img {
     filter: grayscale(0%) brightness(1.15) contrast(1.05);
     transform: scale(1.05);
-    -webkit-mask-size: 125% 125%;
-    mask-size: 125% 125%;
   }
 
-  /* 图片：品牌色光晕 */
+  /* 消融遮罩：中心透明区稍微扩大 */
+  .nav-row:hover .nav-row-image::after {
+    background: radial-gradient(
+      ellipse at center,
+      transparent 40%,
+      rgba(10, 10, 10, 0.25) 55%,
+      rgba(10, 10, 10, 0.65) 68%,
+      rgba(10, 10, 10, 1) 82%
+    );
+  }
+
+  /* 品牌色光晕 */
   .nav-row-blog:hover .nav-row-image {
     filter: drop-shadow(0 0 24px rgba(124, 58, 237, 0.25));
   }
@@ -392,8 +409,8 @@
     }
 
     .nav-row-image {
-      width: 160px;
-      height: 160px;
+      width: 200px;
+      height: 200px;
     }
 
     .nav-row-title {
@@ -403,6 +420,17 @@
     .nav-row-arrow {
       order: 999 !important;
       margin: 8px auto 0 auto !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .nav-row-image {
+      width: 170px;
+      height: 170px;
+    }
+
+    .nav-row-title {
+      font-size: 28px;
     }
 
     .nav-entries-inner:hover .nav-row:not(:hover) {
