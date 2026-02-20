@@ -235,6 +235,19 @@ function markdownToBlocks(markdown: string): any[] {
     // 代码块
     if (trimmed.startsWith('```')) {
       const lang = trimmed.slice(3).trim();
+      // 语言名称映射
+      const langMap: Record<string, string> = {
+        'cpp': 'c++',
+        'js': 'javascript',
+        'ts': 'typescript',
+        'py': 'python',
+        'rb': 'ruby',
+        'sh': 'shell',
+        'yml': 'yaml',
+        'md': 'markdown',
+        'txt': 'plain text',
+      };
+      const notionLang = langMap[lang] || lang || 'plain text';
       const codeLines: string[] = [];
       i++;
       while (i < lines.length && !lines[i].trim().startsWith('```')) {
@@ -246,7 +259,7 @@ function markdownToBlocks(markdown: string): any[] {
         type: 'code',
         code: {
           rich_text: [{ type: 'text', text: { content: codeLines.join('\n') } }],
-          language: lang || 'plain text',
+          language: notionLang,
         },
       });
       i++;
@@ -336,10 +349,16 @@ function markdownToBlocks(markdown: string): any[] {
       continue;
     }
 
-    // 图片 ![alt](url)
+    // 图片 ![alt](url) - 跳过本地路径
     const imageMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
     if (imageMatch) {
       const [, alt, url] = imageMatch;
+      // 跳过本地图片路径（以 /assets/images/ 开头但不以 http 开头）
+      if (!url.startsWith('http') && (url.startsWith('/assets/') || url.startsWith('./') || url.startsWith('../'))) {
+        console.log(`  跳过本地图片: ${url}`);
+        i++;
+        continue;
+      }
       blocks.push({
         object: 'block',
         type: 'image',
