@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Sidebar from '../../components/Sidebar.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import Subscribe from '../../components/Subscribe.astro';
 import { getCollection } from 'astro:content';
@@ -8,74 +7,174 @@ import { getCollection } from 'astro:content';
 const posts = await getCollection('blog', ({ data }) => !data.draft);
 const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-// Get all categories and tags
-const allCategories = [...new Set(posts.flatMap(p => p.data.categories))];
+// 分类合并映射
+const categoryMergeMap: Record<string, string[]> = {
+  '全部': [],
+  '思考': ['思考'],
+  '技术': ['技术', 'ACM', '基础算法'],
+  '生活': ['生活', '随笔'],
+  '项目': ['项目'],
+};
+
+// 获取当前筛选参数
+const url = new URL(Astro.request.url);
+const currentFilter = url.searchParams.get('filter') || '全部';
+
+// 根据筛选条件过滤文章
+const filteredPosts = currentFilter === '全部'
+  ? sortedPosts
+  : sortedPosts.filter(post => {
+      const targetCategories = categoryMergeMap[currentFilter] || [currentFilter];
+      return post.data.categories.some(cat => targetCategories.includes(cat));
+    });
+
+// 定义显示的分类选项
+const filterOptions = ['全部', '思考', '技术', '生活', '项目'];
 ---
 
 <BaseLayout title="博客" description="探索技术、分享思考的文章集合">
-  <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-    <div class="flex flex-col lg:flex-row gap-12">
-      <!-- Main Content -->
-      <main class="flex-1 page-transition">
-        <!-- Header -->
-        <div class="text-center mb-12">
-          <h1 class="text-3xl md:text-4xl font-serif font-bold mb-4">博客</h1>
-          <p class="text-[var(--text-secondary)] max-w-lg mx-auto">
-            探索技术、分享思考的文章集合
-          </p>
+  <div class="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <main class="page-transition">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1 class="page-header-title">Blog</h1>
+          <p class="page-header-subtitle">探索技术，分享思考的文章集合</p>
         </div>
-
-        <!-- Categories -->
-        {allCategories.length > 0 && (
-          <div class="flex flex-wrap justify-center gap-2 mb-12">
-            <a href="/blog" class="px-4 py-2 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-full text-sm">
-              全部
-            </a>
-            {allCategories.map(cat => (
-              <a
-                href={`/blog/categories/${cat.toLowerCase()}`}
-                class="px-4 py-2 border border-[var(--border-color)] rounded-full text-sm hover:bg-[var(--bg-secondary)] transition-colors"
-              >
-                {cat}
-              </a>
+        <div class="page-header-right">
+          <!-- Category Filter -->
+          <nav class="category-filter">
+            {filterOptions.map((option, index) => (
+              <>
+                <a
+                  href={`/blog${option === '全部' ? '' : `?filter=${option}`}`}
+                  class={`filter-item ${currentFilter === option ? 'active' : ''}`}
+                >
+                  {option}
+                </a>
+                {index < filterOptions.length - 1 && (
+                  <span class="filter-sep">/</span>
+                )}
+              </>
             ))}
-          </div>
-        )}
-
-        <!-- Posts List -->
-        <div class="space-y-10">
-          {sortedPosts.map(post => (
-            <BlogCard
-              title={post.data.title}
-              description={post.data.description}
-              slug={post.slug}
-              date={post.data.date}
-              categories={post.data.categories}
-              image={post.data.image}
-              layout="horizontal"
-            />
-          ))}
-        </div>
-
-        <!-- Empty State -->
-        {sortedPosts.length === 0 && (
-          <div class="text-center py-20">
-            <p class="text-[var(--text-muted)]">暂无文章，敬请期待...</p>
-          </div>
-        )}
-
-        <!-- Subscribe Section -->
-        <section class="mt-16 pt-8 border-t border-[var(--border-color)]">
-          <Subscribe showPrivacy={true} />
-        </section>
-      </main>
-
-      <!-- Sidebar (Desktop only) -->
-      <div class="hidden lg:block">
-        <div class="sticky top-24">
-          <Sidebar />
+          </nav>
         </div>
       </div>
-    </div>
+
+      <!-- Posts List -->
+      <div class="card-list space-y-10">
+        {filteredPosts.map(post => (
+          <BlogCard
+            title={post.data.title}
+            description={post.data.description}
+            slug={post.slug}
+            date={post.data.date}
+            categories={post.data.categories}
+            image={post.data.image}
+            layout="horizontal"
+          />
+        ))}
+      </div>
+
+      <!-- Empty State -->
+      {filteredPosts.length === 0 && (
+        <div class="text-center py-20">
+          <p class="text-[var(--text-muted)]">
+            {currentFilter === '全部' ? '暂无文章，敬请期待...' : `暂无"${currentFilter}"分类的文章`}
+          </p>
+        </div>
+      )}
+
+      <!-- Subscribe Section -->
+      <section class="mt-16 pt-8 border-t border-[var(--border-color)]">
+        <Subscribe showPrivacy={true} />
+      </section>
+    </main>
   </div>
 </BaseLayout>
+
+<style>
+  /* Page Header Styles */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+  }
+
+  .page-header-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 36px;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .page-header-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  /* Category Filter Styles */
+  .category-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+
+  .filter-item {
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-decoration: none;
+  }
+
+  .filter-item:hover {
+    color: var(--accent-primary, #A855F7);
+  }
+
+  .filter-item.active {
+    color: var(--accent-primary, #A855F7);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .filter-sep {
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  /* Card List Styles */
+  .card-list {
+    /* Container for hover dimming effect */
+  }
+
+  /* Responsive */
+  @media (max-width: 960px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .page-header-right {
+      width: 100%;
+    }
+
+    .category-filter {
+      margin-top: 0.5rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page-header-title {
+      font-size: 28px;
+    }
+  }
+</style>

@@ -45,7 +45,7 @@ const navItems = [
           <li>
             <a
               href={item.href}
-              class="block py-3 text-lg font-medium text-white/90 hover:text-[#A855F7] transition-colors"
+              class="block py-3 text-lg font-medium text-white/70 hover:text-white transition-colors"
               onclick="window.closeMobileMenu()"
             >
               {item.label}
@@ -54,19 +54,6 @@ const navItems = [
         ))}
       </ul>
 
-      <!-- Divider -->
-      <div class="my-6 border-t border-white/10"></div>
-
-      <!-- Theme Toggle -->
-      <button
-        type="button"
-        id="mobile-theme-toggle"
-        class="flex items-center gap-3 py-3 text-lg text-white/80 hover:text-[#A855F7] transition-colors w-full"
-        onclick="window.toggleMobileTheme()"
-      >
-        <span id="theme-icon">🌙</span>
-        <span id="theme-text">深色/浅色</span>
-      </button>
     </nav>
 
     <!-- Footer -->
@@ -101,38 +88,6 @@ const navItems = [
       document.body.style.overflow = '';
     }
   };
-
-  // Theme toggle
-  window.toggleMobileTheme = function() {
-    const currentTheme = localStorage.getItem('theme') || 'system';
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = currentTheme === 'dark' || (currentTheme === 'system' && prefersDark);
-
-    if (isDark) {
-      localStorage.setItem('theme', 'light');
-      document.documentElement.setAttribute('data-theme', 'light');
-      updateThemeIcon(false);
-    } else {
-      localStorage.setItem('theme', 'dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-      updateThemeIcon(true);
-    }
-  };
-
-  function updateThemeIcon(isDark) {
-    const icon = document.getElementById('theme-icon');
-    if (icon) {
-      icon.textContent = isDark ? '☀️' : '🌙';
-    }
-  }
-
-  // Update icon on load
-  (function() {
-    const theme = localStorage.getItem('theme') || 'system';
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
-    updateThemeIcon(isDark);
-  })();
 
   // Close on ESC key
   document.addEventListener('keydown', (e) => {

@@ -11,7 +11,7 @@ tags:
   - icpc
   - sorting
   - algorithm
-featured: false
+featured: true
 ---
 
 ## 开篇：关于排序，我们可能一直都理解错了

@@ -6,7 +6,7 @@ import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 
 export default defineConfig({
-  site: 'https://amiwrr.blog',
+  site: 'https://rollingtherock.blog',
   output: 'static',
   integrations: [
     tailwind({

@@ -1,22 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
-
-// 分类颜色映射
-const categoryColorMap: Record<string, string> = {
-  '思考': '#A855F7',
-  '技术': '#06B6D4',
-  'ACM': '#06B6D4',
-  '基础算法': '#06B6D4',
-  '项目': '#06B6D4',
-  '生活': '#F97316',
-  '随笔': '#F97316',
-};
-const defaultColor = '#A855F7';
+import { CATEGORY_COLOR_MAP, DEFAULT_BRAND_COLOR } from '../utils/constants';
 
 // 获取品牌色
 function getBrandColor(categories: string[] = []): string {
   const firstCategory = categories[0];
-  return categoryColorMap[firstCategory] || defaultColor;
+  return CATEGORY_COLOR_MAP[firstCategory] || DEFAULT_BRAND_COLOR;
 }
 
 // 获取分类标签（用于显示）
@@ -60,7 +49,7 @@ const projectItemsRaw = projects.map(project => ({
   categories: ['项目'],
   slug: project.slug,
   url: `/projects/${project.slug}`,
-  brandColor: categoryColorMap['项目'],
+  brandColor: CATEGORY_COLOR_MAP['项目'],
   categoryLabel: '项目',
   isProject: true,
 }));
