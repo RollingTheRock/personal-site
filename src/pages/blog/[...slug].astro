@@ -24,8 +24,8 @@ type Props = {
 
 const { post } = Astro.props;
 
-// 获取文章内容
-const content = await getPostContent(post.id);
+// 获取文章内容（支持 Notion + 本地回退）
+const content = await getPostContent(post.id, post.slug, post.type);
 
 // 计算阅读时间
 const readingTime = calculateReadingTime(content);

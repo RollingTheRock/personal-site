@@ -21,8 +21,8 @@ type Props = {
 
 const { project } = Astro.props;
 
-// 获取项目内容
-const content = await getPostContent(project.id);
+// 获取项目内容（支持 Notion + 本地回退）
+const content = await getPostContent(project.id, project.slug, project.type);
 
 // Get all projects for related and navigation
 const allProjects = await getPostsByType('项目');
