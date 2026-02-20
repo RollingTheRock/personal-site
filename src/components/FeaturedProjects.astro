@@ -1,14 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
+import { getFeaturedPosts, type Post } from '../lib/notion-cms.js';
 
-// Get featured projects from content collection
-const allProjects = await getCollection('projects');
-const featuredProjects = allProjects
-  .filter(project => project.data.featured === true)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+// Get featured projects from Notion
+const featuredProjects = await getFeaturedPosts();
+const projectPosts = featuredProjects.filter(post => post.type === '项目');
 ---
 
-{featuredProjects.length > 0 && (
+{projectPosts.length > 0 && (
   <section class="featured-projects py-20 md:py-[80px] border-t border-[#262626]">
     <div class="container-wide">
       <!-- Section Header -->
@@ -24,7 +22,7 @@ const featuredProjects = allProjects
 
       <!-- Projects Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {featuredProjects.map((project) => (
+        {projectPosts.map((project) => (
           <article
             class="project-card group rounded-2xl p-8 card-premium hover:-translate-y-1 transition-transform duration-300 relative"
             style="
@@ -33,11 +31,11 @@ const featuredProjects = allProjects
             "
           >
             <a href={`/projects/${project.slug}`} class="block">
-              {project.data.image ? (
+              {project.image ? (
                 <div class="aspect-video rounded-lg overflow-hidden mb-4">
                   <img
-                    src={project.data.image}
-                    alt={project.data.title}
+                    src={project.image}
+                    alt={project.title}
                     class="w-full h-full object-cover"
                   />
                 </div>
@@ -48,15 +46,15 @@ const featuredProjects = allProjects
               )}
 
               <h3 class="text-xl font-bold text-white mb-3 group-hover:text-[#06B6D4] transition-colors">
-                {project.data.title}
+                {project.title}
               </h3>
 
               <p class="text-[#a3a3a3] text-base mb-4">
-                {project.data.description}
+                {project.description}
               </p>
 
               <div class="project-tags flex flex-wrap gap-2 mb-6">
-                {project.data.tech.map((tag) => (
+                {project.tags.map((tag) => (
                   <span
                     class="px-3 py-1 text-[12px] text-[#a3a3a3] rounded-lg"
                     style="border: 1px solid #333; background: transparent;"
@@ -68,26 +66,15 @@ const featuredProjects = allProjects
             </a>
 
             <div class="project-links flex gap-4">
-              {project.data.github && (
+              {project.slug === 'fomo-killer' && (
                 <a
-                  href={project.data.github}
+                  href="https://github.com/RollingTheRock/ai-daily-digest"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-[#06B6D4] hover:underline text-sm"
                   onclick="event.stopPropagation()"
                 >
                   GitHub →
-                </a>
-              )}
-              {project.data.demo && (
-                <a
-                  href={project.data.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-[#06B6D4] hover:underline text-sm"
-                  onclick="event.stopPropagation()"
-                >
-                  Demo →
                 </a>
               )}
             </div>

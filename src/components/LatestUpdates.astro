@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getAllPublishedPosts, type Post } from '../lib/notion-cms.js';
 import { CATEGORY_COLOR_MAP, DEFAULT_BRAND_COLOR } from '../utils/constants';
 
 // 获取品牌色
@@ -22,46 +22,29 @@ function isProject(categories: string[] = []): boolean {
   return categories[0] === '项目';
 }
 
-// 获取博客和项目数据
-const blogs = await getCollection('blog');
-const projects = await getCollection('projects');
+// 获取所有内容
+const allPosts = await getAllPublishedPosts();
 
-// 处理博客数据
-const blogItems = blogs.map(blog => ({
-  title: blog.data.title,
-  date: blog.data.date,
-  image: blog.data.image || '',
-  description: blog.data.description || '',
-  categories: blog.data.categories || [],
-  slug: blog.slug,
-  url: `/blog/${blog.slug}`,
-  brandColor: getBrandColor(blog.data.categories),
-  categoryLabel: getCategoryLabel(blog.data.categories),
-  isProject: isProject(blog.data.categories),
-}));
-
-// 处理项目数据
-const projectItemsRaw = projects.map(project => ({
-  title: project.data.title,
-  date: project.data.date,
-  image: project.data.image || '',
-  description: project.data.description || '',
-  categories: ['项目'],
-  slug: project.slug,
-  url: `/projects/${project.slug}`,
-  brandColor: CATEGORY_COLOR_MAP['项目'],
-  categoryLabel: '项目',
-  isProject: true,
+// 处理内容数据
+const allItems = allPosts.map(post => ({
+  title: post.title,
+  date: new Date(post.date),
+  image: post.image || '',
+  description: post.description || '',
+  categories: post.categories || [],
+  slug: post.slug,
+  url: post.type === '项目' ? `/projects/${post.slug}` : `/blog/${post.slug}`,
+  brandColor: getBrandColor(post.categories),
+  categoryLabel: getCategoryLabel(post.categories),
+  isProject: isProject(post.categories) || post.type === '项目',
 }));
 
 // 合并并按日期降序排列
-const allItems = [...blogItems, ...projectItemsRaw].sort(
-  (a, b) => b.date.valueOf() - a.date.valueOf()
-);
+const sortedItems = allItems.sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
 // 分离大卡片（最新一条）
-const featuredItem = allItems[0] || null;
-const remainingItems = allItems.slice(1);
+const featuredItem = sortedItems[0] || null;
+const remainingItems = sortedItems.slice(1);
 
 // 分组：左侧博客（非项目），右侧项目
 const blogItems_col = remainingItems.filter(item => !item.isProject);
@@ -73,7 +56,7 @@ function formatDate(date: Date): string {
 }
 ---
 
-{allItems.length > 0 && (
+{sortedItems.length > 0 && (
   <section class="latest-section">
     <div class="latest-inner">
       {/* Header */}

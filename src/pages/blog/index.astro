@@ -2,10 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import Subscribe from '../../components/Subscribe.astro';
-import { getCollection } from 'astro:content';
+import { getPostsByType } from '../../lib/notion-cms.js';
 
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const posts = await getPostsByType('博客');
 
 // 分类合并映射
 const categoryMergeMap: Record<string, string[]> = {
@@ -22,10 +21,10 @@ const currentFilter = url.searchParams.get('filter') || '全部';
 
 // 根据筛选条件过滤文章
 const filteredPosts = currentFilter === '全部'
-  ? sortedPosts
-  : sortedPosts.filter(post => {
+  ? posts
+  : posts.filter(post => {
       const targetCategories = categoryMergeMap[currentFilter] || [currentFilter];
-      return post.data.categories.some(cat => targetCategories.includes(cat));
+      return post.categories.some(cat => targetCategories.includes(cat));
     });
 
 // 定义显示的分类选项
@@ -65,12 +64,12 @@ const filterOptions = ['全部', '思考', '技术', '生活', '项目'];
       <div class="card-list space-y-10">
         {filteredPosts.map(post => (
           <BlogCard
-            title={post.data.title}
-            description={post.data.description}
+            title={post.title}
+            description={post.description}
             slug={post.slug}
-            date={post.data.date}
-            categories={post.data.categories}
-            image={post.data.image}
+            date={new Date(post.date)}
+            categories={post.categories}
+            image={post.image}
             layout="horizontal"
           />
         ))}

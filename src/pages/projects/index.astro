@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { getCollection } from 'astro:content';
+import { getPostsByType } from '../../lib/notion-cms.js';
 
-const projects = await getCollection('projects');
-const sortedProjects = projects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const projects = await getPostsByType('项目');
 ---
 
 <BaseLayout title="项目" description="我的开源项目和个人作品">
@@ -22,21 +21,20 @@ const sortedProjects = projects.sort((a, b) => b.data.date.valueOf() - a.data.da
 
     <!-- Projects Grid -->
     <div class="grid md:grid-cols-2 gap-6 page-transition projects-grid">
-      {sortedProjects.map(project => (
+      {projects.map(project => (
         <ProjectCard
-          title={project.data.title}
-          description={project.data.description}
+          title={project.title}
+          description={project.description}
           slug={project.slug}
-          image={project.data.image}
-          tech={project.data.tech}
-          github={project.data.github}
-          demo={project.data.demo}
+          image={project.image}
+          tech={project.tags}
+          github={project.slug === 'fomo-killer' ? 'https://github.com/RollingTheRock/ai-daily-digest' : undefined}
         />
       ))}
     </div>
 
     <!-- Empty State -->
-    {sortedProjects.length === 0 && (
+    {projects.length === 0 && (
       <div class="text-center py-20">
         <p class="text-[var(--text-muted)]">暂无项目，敬请期待...</p>
       </div>

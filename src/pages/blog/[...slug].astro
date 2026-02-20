@@ -1,29 +1,50 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
 import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import Subscribe from '../../components/Subscribe.astro';
+import { getAllPublishedPosts, getPostBySlug, getPostContent, type Post } from '../../lib/notion-cms.js';
 import { calculateReadingTime } from '../../utils/readingTime';
+import { Markdown } from '@astropub/md';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  const posts = await getAllPublishedPosts();
+  return posts
+    .filter(post => post.type === '博客')
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
 }
 
 type Props = {
-  post: CollectionEntry<'blog'>;
+  post: Post;
 };
 
 const { post } = Astro.props;
-const { Content, headings } = await post.render();
 
-// Calculate reading time
-const readingTime = calculateReadingTime(post.body);
+// 获取文章内容
+const content = await getPostContent(post.id);
+
+// 计算阅读时间
+const readingTime = calculateReadingTime(content);
+
+// 解析 Markdown 获取 headings（简化实现）
+const headings = content.split('\n')
+  .filter(line => line.startsWith('#'))
+  .map(line => {
+    const match = line.match(/^(#{1,6})\s+(.+)$/);
+    if (match) {
+      return {
+        depth: match[1].length,
+        slug: match[2].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'),
+        text: match[2],
+      };
+    }
+    return null;
+  })
+  .filter(Boolean) as { depth: number; slug: string; text: string }[];
 
 // 分类颜色映射
 const categoryColorMap: Record<string, string> = {
@@ -37,10 +58,11 @@ const categoryColorMap: Record<string, string> = {
 };
 
 const defaultColor = '#A855F7';
-const primaryCategory = post.data.categories?.[0] || '';
+const primaryCategory = post.categories?.[0] || '';
 const brandColor = categoryColorMap[primaryCategory] || defaultColor;
 
-function formatDate(date: Date) {
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
   return new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',
     month: '2-digit',
@@ -50,9 +72,9 @@ function formatDate(date: Date) {
 ---
 
 <BaseLayout
-  title={post.data.title}
-  description={post.data.description}
-  image={post.data.image}
+  title={post.title}
+  description={post.description}
+  image={post.image}
   type="article"
 >
   <article class="py-12 md:py-20" style={`--brand-color: ${brandColor};`}>
@@ -60,7 +82,7 @@ function formatDate(date: Date) {
     <header class="article-header">
       <!-- Meta info -->
       <div class="article-meta">
-        {post.data.categories.length > 0 && (
+        {post.categories.length > 0 && (
           <>
             <span class="meta-category">
               <span class="dot"></span>
@@ -69,17 +91,17 @@ function formatDate(date: Date) {
             <span class="meta-sep">·</span>
           </>
         )}
-        <span>{formatDate(post.data.date)}</span>
+        <span>{formatDate(post.date)}</span>
         <span class="meta-sep">·</span>
         <span>{readingTime.text}</span>
       </div>
 
       <!-- Title -->
-      <h1 class="article-title">{post.data.title}</h1>
+      <h1 class="article-title">{post.title}</h1>
 
       <!-- Description (optional) -->
-      {post.data.description && (
-        <p class="article-description">{post.data.description}</p>
+      {post.description && (
+        <p class="article-description">{post.description}</p>
       )}
 
       <!-- Divider -->
@@ -87,14 +109,14 @@ function formatDate(date: Date) {
 
       <!-- Cover Image -->
       <div class="article-cover-wrapper">
-        {post.data.image ? (
+        {post.image ? (
           <img
-            src={post.data.image}
-            alt={post.data.title}
+            src={post.image}
+            alt={post.title}
             class="article-cover"
           />
         ) : (
-          <ImagePlaceholder alt={post.data.title} aspectRatio="21/9" class="article-cover" />
+          <ImagePlaceholder alt={post.title} aspectRatio="21/9" class="article-cover" />
         )}
       </div>
     </header>
@@ -104,14 +126,14 @@ function formatDate(date: Date) {
       <!-- Content -->
       <div class="article-main">
         <div class="article-content">
-          <Content />
+          <Markdown of={content} />
         </div>
 
         <!-- Tags -->
-        {post.data.tags.length > 0 && (
+        {post.tags.length > 0 && (
           <div class="mt-12 pt-8 border-t border-[var(--border-color)]">
             <div class="flex flex-wrap gap-2">
-              {post.data.tags.map(tag => (
+              {post.tags.map(tag => (
                 <a
                   href={`/blog/tags/${tag.toLowerCase()}`}
                   class="px-3 py-1 bg-[var(--bg-secondary)] rounded-full text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"

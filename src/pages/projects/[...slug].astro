@@ -1,14 +1,14 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 import RelatedProjects from '../../components/RelatedProjects.astro';
 import ContentNavigation from '../../components/ContentNavigation.astro';
 import ShareButtons from '../../components/ShareButtons.astro';
-import { formatDateYearMonth } from '../../utils/date';
+import { getPostsByType, getPostBySlug, getPostContent, type Post } from '../../lib/notion-cms.js';
+import { Markdown } from '@astropub/md';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
+  const projects = await getPostsByType('项目');
   return projects.map((project) => ({
     params: { slug: project.slug },
     props: { project },
@@ -16,26 +16,32 @@ export async function getStaticPaths() {
 }
 
 type Props = {
-  project: CollectionEntry<'projects'>;
+  project: Post;
 };
 
 const { project } = Astro.props;
-const { Content } = await project.render();
+
+// 获取项目内容
+const content = await getPostContent(project.id);
 
 // Get all projects for related and navigation
-const allProjects = await getCollection('projects');
-const sortedProjects = allProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const currentIndex = sortedProjects.findIndex(p => p.slug === project.slug);
-const prevProject = currentIndex < sortedProjects.length - 1 ? sortedProjects[currentIndex + 1] : undefined;
-const nextProject = currentIndex > 0 ? sortedProjects[currentIndex - 1] : undefined;
+const allProjects = await getPostsByType('项目');
+const currentIndex = allProjects.findIndex(p => p.slug === project.slug);
+const prevProject = currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : undefined;
+const nextProject = currentIndex > 0 ? allProjects[currentIndex - 1] : undefined;
 
-const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https://amiwrr.blog').toString();
+const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https://rollingtherock.blog').toString();
+
+function formatDateYearMonth(dateString: string) {
+  const date = new Date(dateString);
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
 ---
 
 <BaseLayout
-  title={project.data.title}
-  description={project.data.description}
-  image={project.data.image}
+  title={project.title}
+  description={project.description}
+  image={project.image}
   type="article"
 >
   <article class="py-12 md:py-20">
@@ -45,20 +51,20 @@ const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https:/
       <div class="flex items-center justify-center gap-2 text-sm mb-4">
         <span class="text-[#06B6D4] font-medium">项目</span>
         <span class="text-[var(--text-muted)]">·</span>
-        <span class="text-[var(--text-secondary)]">{formatDateYearMonth(project.data.date)}</span>
+        <span class="text-[var(--text-secondary)]">{formatDateYearMonth(project.date)}</span>
       </div>
 
       <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4">
-        {project.data.title}
+        {project.title}
       </h1>
 
       <p class="text-lg text-[var(--text-secondary)] mb-6">
-        {project.data.description}
+        {project.description}
       </p>
 
       <!-- Tech Stack - Plain Text -->
       <div class="text-sm text-[var(--text-muted)] text-center mb-8">
-        {project.data.tech.map((t, i) => (
+        {project.tags.map((t, i) => (
           <span>
             {i > 0 && <span class="mx-1.5">·</span>}
             {t}
@@ -68,9 +74,9 @@ const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https:/
 
       <!-- Links -->
       <div class="flex justify-center gap-4">
-        {project.data.github && (
+        {project.slug === 'fomo-killer' && (
           <a
-            href={project.data.github}
+            href="https://github.com/RollingTheRock/ai-daily-digest"
             target="_blank"
             rel="noopener noreferrer"
             class="project-btn"
@@ -81,58 +87,43 @@ const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https:/
             查看源码
           </a>
         )}
-        {project.data.demo && (
-          <a
-            href={project.data.demo}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="project-btn"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-            在线预览
-          </a>
-        )}
       </div>
     </header>
 
     <!-- Cover Image -->
     <div class="max-w-medium mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-      {project.data.image ? (
+      {project.image ? (
         <div class="overflow-hidden rounded-lg">
           <img
-            src={project.data.image}
-            alt={project.data.title}
+            src={project.image}
+            alt={project.title}
             class="w-full aspect-video object-cover"
           />
         </div>
       ) : (
-        <ImagePlaceholder alt={project.data.title} aspectRatio="16/9" class="w-full rounded-lg" />
+        <ImagePlaceholder alt={project.title} aspectRatio="16/9" class="w-full rounded-lg" />
       )}
     </div>
 
     <!-- Content -->
     <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">
       <div class="article-content">
-        <Content />
+        <Markdown of={content} />
       </div>
 
       <!-- Share Buttons -->
       <div class="mt-12 pt-8 border-t border-[var(--border-color)]">
         <ShareButtons
-          title={project.data.title}
+          title={project.title}
           url={canonicalURL}
-          description={project.data.description}
+          description={project.description}
         />
       </div>
 
       <!-- Navigation -->
       <ContentNavigation
-        prev={prevProject ? { slug: prevProject.slug, data: { title: prevProject.data.title } } : undefined}
-        next={nextProject ? { slug: nextProject.slug, data: { title: nextProject.data.title } } : undefined}
+        prev={prevProject ? { slug: prevProject.slug, data: { title: prevProject.title } } : undefined}
+        next={nextProject ? { slug: nextProject.slug, data: { title: nextProject.title } } : undefined}
         basePath="/projects"
         prevLabel="上一个项目"
         nextLabel="下一个项目"
@@ -141,8 +132,8 @@ const canonicalURL = new URL(`/projects/${project.slug}`, Astro.site || 'https:/
       <!-- Related Projects -->
       <RelatedProjects
         currentSlug={project.slug}
-        tech={project.data.tech}
-        allProjects={sortedProjects}
+        tech={project.tags}
+        allProjects={allProjects.map(p => ({ ...p, data: { title: p.title, tech: p.tags } }))}
       />
     </div>
   </article>
