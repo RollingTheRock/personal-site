@@ -10,17 +10,24 @@ import { SITE_DESCRIPTION } from '../utils/constants';
     <section class="text-center mb-20">
       <!-- Avatar -->
       <div class="w-28 h-28 mx-auto mb-8 relative">
-        <div class="w-full h-full rounded-full bg-gradient-to-br from-[var(--bg-tertiary)] to-[var(--bg-secondary)] flex items-center justify-center text-4xl shadow-sm">
-          {AUTHOR.name.charAt(0)}
-        </div>
+        <img
+          src="/assets/images/avatar.jpg"
+          alt={AUTHOR.name}
+          class="w-full h-full rounded-full object-cover border-2 border-dashed border-[#A855F7]"
+          loading="eager"
+          decoding="async"
+        />
       </div>
 
       <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">
         {AUTHOR.name}
       </h1>
 
-      <p class="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed mb-6">
+      <p class="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed mb-3">
         {AUTHOR.bio}
+      </p>
+      <p class="text-sm text-[var(--text-muted)] italic max-w-2xl mx-auto mb-6">
+        "One must imagine Sisyphus happy." — Albert Camus
       </p>
 
       <!-- Social Links -->
@@ -29,7 +36,7 @@ import { SITE_DESCRIPTION } from '../utils/constants';
           href={GITHUB_URL}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-color)] rounded-full text-sm hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all duration-200"
+          class="social-btn inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-color)] rounded-full text-sm transition-all duration-300"
           aria-label="GitHub"
         >
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -42,7 +49,7 @@ import { SITE_DESCRIPTION } from '../utils/constants';
           href={TWITTER_URL}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-color)] rounded-full text-sm hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all duration-200"
+          class="social-btn inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-color)] rounded-full text-sm transition-all duration-300"
           aria-label="Twitter"
         >
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -53,7 +60,7 @@ import { SITE_DESCRIPTION } from '../utils/constants';
 
         <a
           href={`mailto:${AUTHOR.email}`}
-          class="inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-color)] rounded-full text-sm hover:bg-[var(--bg-secondary)] hover:border-[var(--text-primary)] transition-all duration-200"
+          class="social-btn inline-flex items-center gap-2 px-4 py-2 border border-[var(--border-color)] rounded-full text-sm transition-all duration-300"
           aria-label="Email"
         >
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -71,18 +78,20 @@ import { SITE_DESCRIPTION } from '../utils/constants';
       <div class="prose prose-lg max-w-none text-[var(--text-secondary)] leading-relaxed space-y-4">
         <p>
           你好，我是 <strong class="text-[var(--text-primary)]">{AUTHOR.name}</strong>。
-          作为一名技术爱好者，我热衷于探索人工智能、Web 开发和自动化工具的无限可能。
+          我目前的状态大概可以概括为：同时在五个方向上推石头，还觉得挺开心的。
         </p>
         <p>
-          这个网站是我记录学习历程、分享技术文章和展示个人项目的地方。
-          我相信<strong class="text-[var(--text-primary)]">知识分享的力量</strong>，
-          希望通过写作帮助更多人学习和成长。
+          主线是 Agent 工作流和高质量数据集构建。前者是想搞明白怎么让 AI 别光会聊天，后者是想搞明白怎么让 AI 吃上细粮。两件事听起来很宏大，但大部分时间我在调 Prompt 和清洗脏数据。
         </p>
         <p>
-          在这里，你可以找到我对 AI 论文的解读、技术实践的心得，
-          以及我构建的各种小工具。如果你对我的内容感兴趣，欢迎订阅我的
-          <a href="/rss.xml" class="text-[var(--text-primary)] hover:underline">RSS</a>
-          或关注我的社交媒体。
+          区块链和算法竞赛是我一直在做的事。一个教会了我什么叫"信任"，一个教会了我什么叫"超时"。维特根斯坦是我读了很久还在读的人，目前最大的收获是学会了在不确定的时候闭嘴。
+        </p>
+        <p>
+          然后我花了不成比例的时间搭了这个网站。因为我觉得一个人的审美应该被看见，哪怕看的人只有自己。
+        </p>
+        <p>
+          这里是我的自留地。技术、想法、偶尔的废话，都在这里。欢迎订阅
+          <a href="/rss.xml" class="text-[var(--text-primary)] hover:text-[#A855F7] hover:underline transition-colors">RSS</a>，或者在社交媒体上找到我。
         </p>
       </div>
     </section>
@@ -142,9 +151,21 @@ import { SITE_DESCRIPTION } from '../utils/constants';
 
         <!-- AI -->
         <div>
-          <h3 class="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3">AI & 数据</h3>
+          <h3 class="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3">AI & 数据工程</h3>
           <div class="flex flex-wrap gap-2">
             {SKILLS.ai.map(skill => (
+              <span class="px-4 py-2 bg-[var(--bg-secondary)] rounded-lg text-sm font-medium">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Agent & Workflow -->
+        <div>
+          <h3 class="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3">Agent & 工作流</h3>
+          <div class="flex flex-wrap gap-2">
+            {SKILLS.agent.map(skill => (
               <span class="px-4 py-2 bg-[var(--bg-secondary)] rounded-lg text-sm font-medium">
                 {skill}
               </span>
@@ -166,7 +187,7 @@ import { SITE_DESCRIPTION } from '../utils/constants';
           {TIMELINE.map((item, index) => (
             <div class="relative pl-8 md:pl-0">
               <!-- Dot -->
-              <div class="absolute left-0 md:left-1/2 top-1 w-3 h-3 rounded-full bg-[var(--text-primary)] border-2 border-[var(--bg-primary)] md:-translate-x-1/2"></div>
+              <div class="absolute left-0 md:left-1/2 top-1 w-3 h-3 rounded-full bg-[#A855F7] border-2 border-[var(--bg-primary)] md:-translate-x-1/2"></div>
 
               <!-- Content -->
               <div class={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:ml-auto md:pl-12'}`}>
@@ -184,13 +205,13 @@ import { SITE_DESCRIPTION } from '../utils/constants';
     <section class="text-center py-12 border-t border-[var(--border-color)]">
       <h2 class="text-2xl font-serif font-semibold mb-4">联系我</h2>
       <p class="text-[var(--text-secondary)] mb-8 max-w-lg mx-auto">
-        如果你有任何问题、建议，或者想一起探讨技术话题，欢迎通过邮件联系我。
+        如果你想聊技术、聊想法，或者只是想告诉我网站哪里有 bug，都欢迎通过邮件联系我。
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a
           href={`mailto:${AUTHOR.email}`}
-          class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg font-medium hover:opacity-90 transition-opacity"
+          class="contact-btn inline-flex items-center justify-center gap-2 px-8 py-4 border border-[var(--border-color)] rounded-lg font-medium transition-all duration-300"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="4" width="20" height="16" rx="2"></rect>
@@ -201,7 +222,7 @@ import { SITE_DESCRIPTION } from '../utils/constants';
 
         <a
           href="/rss.xml"
-          class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-[var(--border-color)] rounded-lg font-medium hover:bg-[var(--bg-secondary)] transition-colors"
+          class="contact-btn inline-flex items-center justify-center gap-2 px-8 py-4 border border-[var(--border-color)] rounded-lg font-medium transition-all duration-300"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 11a9 9 0 0 1 9 9"></path>
@@ -214,3 +235,19 @@ import { SITE_DESCRIPTION } from '../utils/constants';
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  /* Social buttons hover */
+  .social-btn:hover {
+    border-color: #A855F7;
+    color: #A855F7;
+    background: rgba(168, 85, 247, 0.1);
+  }
+
+  /* Contact buttons hover */
+  .contact-btn:hover {
+    border-color: #A855F7;
+    color: #A855F7;
+    background: rgba(168, 85, 247, 0.1);
+  }
+</style>

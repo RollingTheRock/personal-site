@@ -1,4 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap');
+
+/* 本地字体加载 - @font-face 定义 */
+
+/* 英文衬线体 - Playfair Display */
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('/fonts/PlayfairDisplay-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 中文字体 - 思源黑体 (Noto Sans SC) */
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/NotoSansSC-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/NotoSansSC-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -17,9 +46,15 @@
     --accent: #1A1A1A;
 
     /* 字体 */
-    --font-serif: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
-    --font-sans: 'Inter', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font-serif: 'Playfair Display', 'Noto Sans SC', Georgia, 'SimSun', sans-serif;
+    --font-sans: 'Noto Sans SC', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'Fira Code', 'Source Code Pro', Consolas, monospace;
+    --font-tagline: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+
+    /* 字体变量 - 按用途 */
+    --font-display: 'Playfair Display', 'Noto Sans SC', sans-serif;
+    --font-body: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+    --font-hero-tagline: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   }
 
   [data-theme="dark"] {
@@ -32,6 +67,16 @@
     --text-muted: #666666;
     --border-color: #2A2A2A;
     --accent: #FFFFFF;
+
+    /* 品牌色 - 复古拼贴风格 */
+    --brand-purple: #A855F7;
+    --brand-cyan: #06B6D4;
+    --brand-orange: #F97316;
+
+    /* 分类卡片背景色 */
+    --card-blog: #7C3AED;
+    --card-project: #0891B2;
+    --card-video: #EA580C;
   }
 
   * {
@@ -43,12 +88,21 @@
   }
 
   body {
-    font-family: var(--font-sans);
+    font-family: var(--font-body);
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.75;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 字体工具类 */
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
   }
 
   /* 选择文本样式 */
@@ -270,5 +324,203 @@
   .toc-link.active {
     color: var(--text-primary);
     font-weight: 500;
+  }
+
+  /* 首页动画关键帧 */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 首页动画类 */
+  .animate-fade-in-down {
+    animation: fadeInDown 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  /* 动画延迟工具类 */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  .delay-700 { animation-delay: 700ms; }
+  .delay-800 { animation-delay: 800ms; }
+
+  /* 初始隐藏（等待动画触发） */
+  .opacity-0-init {
+    opacity: 0;
+  }
+
+  /* 尊重用户的减少动画偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in-down,
+    .animate-scale-in,
+    .animate-slide-up {
+      animation: none;
+      opacity: 1;
+    }
+
+    .opacity-0-init {
+      opacity: 1;
+    }
+  }
+
+  /* 全局噪点纹理 */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* 卡片基础样式 - 微妙边框和渐变背景 */
+  .card-premium {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(145deg, #1a1a1a 0%, #141414 100%);
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .card-premium:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  /* 精选区域标题装饰线 */
+  .section-title-premium {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+  }
+
+  .section-title-premium::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: #A855F7;
+    margin-bottom: 16px;
+    border-radius: 2px;
+  }
+
+  /* 容器系统 - 分层内容宽度 */
+  .container-narrow {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .container-medium {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .container-wide {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* 移动端适配 */
+  @media (max-width: 768px) {
+    .container-narrow,
+    .container-medium,
+    .container-wide {
+      padding: 0 20px;
+      max-width: 100%;
+    }
+  }
+
+  /* 思源黑体字重样式 */
+  .font-black {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em;
+  }
+
+  .font-bold {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
+  }
+
+  /* Logo - 英文走 Playfair Display */
+  .logo {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+  }
+
+  /* Hero Tagline - Cormorant Garamond */
+  .hero-tagline {
+    font-family: var(--font-hero-tagline) !important;
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+
+  /* 主标题 - 用 900 超粗 */
+  .hero-title {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em;
+  }
+
+  /* 区域标题 - 用 900 超粗 */
+  .section-header h2 {
+    font-family: var(--font-display) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em;
+  }
+
+  /* 卡片标题 - 用 700 粗体 */
+  .card-title {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
+  }
+
+  /* 文章标题 - 用 700 */
+  .post-card h3 {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
   }
 }

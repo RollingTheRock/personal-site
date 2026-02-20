@@ -31,6 +31,18 @@ export default {
           DEFAULT: '#E5E5E5',
           dark: '#2A2A2A',
         },
+        /* 品牌色 - 首页复古拼贴风格 */
+        brand: {
+          purple: '#A855F7',
+          cyan: '#06B6D4',
+          orange: '#F97316',
+        },
+        /* 分类卡片颜色 */
+        category: {
+          blog: '#7C3AED',
+          project: '#0891B2',
+          video: '#EA580C',
+        },
       },
       fontFamily: {
         serif: ['Playfair Display', 'Noto Serif SC', 'Georgia', 'serif'],

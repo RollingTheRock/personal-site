@@ -1,131 +1,200 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Sidebar from '../components/Sidebar.astro';
-import Subscribe from '../components/Subscribe.astro';
-import BlogCard from '../components/BlogCard.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import { getCollection } from 'astro:content';
-import { FEATURED_POSTS_COUNT, FEATURED_PROJECTS_COUNT } from '../utils/constants';
-
-// Get featured posts and projects
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const projects = await getCollection('projects');
-
-const featuredPosts = posts
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, FEATURED_POSTS_COUNT);
-
-const featuredProjects = projects
-  .filter(p => p.data.featured)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, FEATURED_PROJECTS_COUNT);
+import Logo from '../components/Logo.astro';
+import HeroSection from '../components/HeroSection.astro';
+import NavEntries from '../components/NavEntries.astro';
+import LatestUpdates from '../components/LatestUpdates.astro';
+import FeaturedPosts from '../components/FeaturedPosts.astro';
+import FeaturedProjects from '../components/FeaturedProjects.astro';
+import MobileMenu from '../components/MobileMenu.astro';
 ---
 
-<BaseLayout>
-  <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-    <div class="flex flex-col lg:flex-row gap-12">
-      <!-- Main Content -->
-      <main class="flex-1 page-transition">
-        <!-- Hero Section -->
-        <section class="mb-20 md:mb-32">
-          <div class="max-w-2xl">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
-              探索技术，<br />
-              <span class="text-[var(--text-secondary)]">分享思考</span>
-            </h1>
-            <p class="text-lg md:text-xl text-[var(--text-secondary)] mb-8 leading-relaxed">
-              我是 RollingTheRock，一名热爱技术的开发者。
-              这里记录我的学习历程、项目实践和技术思考。
-            </p>
-            <div class="flex flex-wrap gap-4">
-              <a
-                href="/blog"
-                class="inline-flex items-center px-6 py-3 bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-lg font-medium hover:opacity-90 transition-opacity"
-              >
-                阅读博客
-                <svg class="ml-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </a>
-              <a
-                href="/projects"
-                class="inline-flex items-center px-6 py-3 border border-[var(--border-color)] rounded-lg font-medium hover:bg-[var(--bg-secondary)] transition-colors"
-              >
-                查看项目
-              </a>
+<BaseLayout noHeader={true} noFooter={false}>
+  <div class="min-h-screen flex flex-col">
+    <!-- Header with Left Hamburger Menu and Centered Logo -->
+    <header class="relative w-full pt-12 pb-6 opacity-0-init animate-fade-in-down">
+      <div class="container-wide relative flex items-center justify-center">
+        <!-- Hamburger menu button - absolute positioned left -->
+        <button
+          type="button"
+          class="absolute left-0 p-2 text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
+          aria-label="打开菜单"
+          onclick="window.openMobileMenu()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Centered Logo -->
+        <Logo />
+      </div>
+    </header>
+
+    <!-- Full-width Divider -->
+    <div class="w-full border-b border-[var(--border-color)]"></div>
+
+    <!-- Mobile Menu -->
+    <MobileMenu />
+
+    <!-- Main Content -->
+    <main class="flex-1 page-transition">
+      <!-- Hero Section -->
+      <div class="pt-8">
+        <HeroSection />
+      </div>
+
+      <!-- Divider between Hero and Nav Entries -->
+      <div class="container-wide">
+        <div class="border-b border-[var(--border-color)]"></div>
+      </div>
+
+      <!-- Navigation Entries -->
+      <NavEntries />
+
+      <!-- Latest Updates -->
+      <LatestUpdates />
+
+      <!-- Divider between Nav Entries and Featured Blog -->
+      <div class="container-wide">
+        <div class="border-b border-[var(--border-color)]"></div>
+      </div>
+
+      <!-- Featured Posts -->
+      <FeaturedPosts class="pt-16" />
+
+      <!-- Divider between Featured Blog and Featured Projects -->
+      <div class="container-wide">
+        <div class="border-b border-[var(--border-color)] mt-16"></div>
+      </div>
+
+      <!-- Featured Projects -->
+      <FeaturedProjects class="pt-16" />
+
+      <!-- Newsletter Section -->
+      <section class="newsletter">
+        <div class="container-narrow">
+          <div class="newsletter-card">
+            <h2>订阅更新</h2>
+            <p>获取最新的技术文章、项目更新和思考分享。没有垃圾邮件，随时取消订阅。</p>
+            <div class="newsletter-form">
+              <input type="email" placeholder="your@email.com" class="newsletter-input">
+              <button class="newsletter-submit">订阅</button>
             </div>
           </div>
-        </section>
-
-        <!-- Featured Posts Section -->
-        {featuredPosts.length > 0 && (
-          <section class="mb-20 md:mb-32">
-            <div class="flex items-center justify-between mb-8">
-              <h2 class="text-2xl md:text-3xl font-serif font-semibold">最新文章</h2>
-              <a href="/blog" class="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1">
-                查看全部
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </a>
-            </div>
-            <div class="grid gap-8">
-              {featuredPosts.map(post => (
-                <BlogCard
-                  title={post.data.title}
-                  description={post.data.description}
-                  slug={post.slug}
-                  date={post.data.date}
-                  categories={post.data.categories}
-                  image={post.data.image}
-                  layout="horizontal"
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <!-- Featured Projects Section -->
-        {featuredProjects.length > 0 && (
-          <section class="mb-20 md:mb-32">
-            <div class="flex items-center justify-between mb-8">
-              <h2 class="text-2xl md:text-3xl font-serif font-semibold">精选项目</h2>
-              <a href="/projects" class="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1">
-                查看全部
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </a>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-              {featuredProjects.map(project => (
-                <ProjectCard
-                  title={project.data.title}
-                  description={project.data.description}
-                  slug={project.slug}
-                  image={project.data.image}
-                  tech={project.data.tech}
-                  github={project.data.github}
-                  demo={project.data.demo}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <!-- Subscribe Section -->
-        <section>
-          <Subscribe showPrivacy={true} />
-        </section>
-      </main>
-
-      <!-- Sidebar (Desktop only) -->
-      <div class="hidden lg:block">
-        <div class="sticky top-24">
-          <Sidebar />
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   </div>
 </BaseLayout>
+
+<script>
+  // Scroll animation observer
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          // Add stagger delay based on element's position among siblings
+          const parent = entry.target.parentElement;
+          const siblings = parent ? Array.from(parent.children) : [];
+          const siblingIndex = siblings.indexOf(entry.target);
+          const delay = siblingIndex * 100;
+
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, delay);
+
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements with scroll-animate class
+    document.querySelectorAll('.scroll-animate').forEach((el) => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+<style>
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Newsletter Section */
+  .newsletter {
+    padding: 80px 0;
+  }
+
+  .newsletter-card {
+    background: #111111;
+    border-radius: 16px;
+    padding: 48px;
+    border-top: 1px solid #262626;
+  }
+
+  .newsletter h2 {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+
+  .newsletter p {
+    color: #a3a3a3;
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 12px;
+    max-width: 440px;
+  }
+
+  .newsletter-input {
+    flex: 1;
+    padding: 12px 16px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .newsletter-input:focus {
+    border-color: #A855F7;
+  }
+
+  .newsletter-submit {
+    padding: 12px 24px;
+    background: #A855F7;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .newsletter-submit:hover {
+    background: #9333EA;
+  }
+</style>

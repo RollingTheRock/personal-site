@@ -1,0 +1,568 @@
+---
+import { getCollection } from 'astro:content';
+import { CATEGORY_COLOR_MAP, DEFAULT_BRAND_COLOR } from '../utils/constants';
+
+// 获取品牌色
+function getBrandColor(categories: string[] = []): string {
+  const firstCategory = categories[0];
+  return CATEGORY_COLOR_MAP[firstCategory] || DEFAULT_BRAND_COLOR;
+}
+
+// 获取分类标签（用于显示）
+function getCategoryLabel(categories: string[] = []): string {
+  if (categories.length === 0) return '博客';
+  const first = categories[0];
+  if (first === 'ACM' || first === '基础算法') return '技术';
+  if (first === '随笔') return '生活';
+  return first;
+}
+
+// 判断是否为项目
+function isProject(categories: string[] = []): boolean {
+  return categories[0] === '项目';
+}
+
+// 获取博客和项目数据
+const blogs = await getCollection('blog');
+const projects = await getCollection('projects');
+
+// 处理博客数据
+const blogItems = blogs.map(blog => ({
+  title: blog.data.title,
+  date: blog.data.date,
+  image: blog.data.image || '',
+  description: blog.data.description || '',
+  categories: blog.data.categories || [],
+  slug: blog.slug,
+  url: `/blog/${blog.slug}`,
+  brandColor: getBrandColor(blog.data.categories),
+  categoryLabel: getCategoryLabel(blog.data.categories),
+  isProject: isProject(blog.data.categories),
+}));
+
+// 处理项目数据
+const projectItemsRaw = projects.map(project => ({
+  title: project.data.title,
+  date: project.data.date,
+  image: project.data.image || '',
+  description: project.data.description || '',
+  categories: ['项目'],
+  slug: project.slug,
+  url: `/projects/${project.slug}`,
+  brandColor: CATEGORY_COLOR_MAP['项目'],
+  categoryLabel: '项目',
+  isProject: true,
+}));
+
+// 合并并按日期降序排列
+const allItems = [...blogItems, ...projectItemsRaw].sort(
+  (a, b) => b.date.valueOf() - a.date.valueOf()
+);
+
+// 分离大卡片（最新一条）
+const featuredItem = allItems[0] || null;
+const remainingItems = allItems.slice(1);
+
+// 分组：左侧博客（非项目），右侧项目
+const blogItems_col = remainingItems.filter(item => !item.isProject);
+const projectItems_col = remainingItems.filter(item => item.isProject);
+
+// 格式化日期
+function formatDate(date: Date): string {
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+}
+---
+
+{allItems.length > 0 && (
+  <section class="latest-section">
+    <div class="latest-inner">
+      {/* Header */}
+      <div class="latest-header">
+        <div class="latest-header-left">
+          <h2 class="latest-heading">最新动态</h2>
+          <span class="latest-subheading">LATEST UPDATES</span>
+        </div>
+        <a href="/blog" class="latest-view-all">
+          查看全部 <span class="latest-view-arrow">→</span>
+        </a>
+      </div>
+
+      {/* Title Row */}
+      <div class="title-row">
+        <h3 class="column-title">Recent Blogs</h3>
+        <div></div>
+        <h3 class="column-title">Recent Projects</h3>
+      </div>
+
+      {/* Three Column Layout */}
+      <div class="cards-grid three-col-layout">
+        {/* Left Column: Blog - Now using compact list style (was Projects style) */}
+        <div class="col-blog">
+          <div class="col-items">
+            {blogItems_col.map(item => (
+              <a
+                href={item.url}
+                class="card-item card-blog-compact"
+                style={`--brand-color: ${item.brandColor}`}
+              >
+                <div class="card-image-wrapper blog-compact-image-wrapper">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    class="card-image"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="card-content blog-compact-content">
+                  <h4 class="card-title card-title-blog-compact">
+                    <span class="card-dot" style={`background: ${item.brandColor}`}></span>
+                    {item.title}
+                  </h4>
+                  <div class="card-meta">
+                    <span class="card-tag" style={`color: ${item.brandColor}`}>
+                      {item.categoryLabel}
+                    </span>
+                    <span class="card-date">{formatDate(item.date)}</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Center Column: Featured */}
+        <div class="col-featured">
+          {featuredItem && (
+            <a
+              href={featuredItem.url}
+              class="card-item card-featured"
+              style={`--brand-color: ${featuredItem.brandColor}`}
+            >
+              <div class="card-image-wrapper featured-image-wrapper">
+                <img
+                  src={featuredItem.image}
+                  alt={featuredItem.title}
+                  class="card-image"
+                  loading="eager"
+                />
+              </div>
+              <div class="card-content featured-content">
+                <h3 class="card-title card-title-featured">
+                  <span class="card-dot" style={`background: ${featuredItem.brandColor}`}></span>
+                  {featuredItem.title}
+                </h3>
+                {featuredItem.description && (
+                  <p class="card-description">{featuredItem.description}</p>
+                )}
+                <div class="card-meta">
+                  <span class="card-tag" style={`color: ${featuredItem.brandColor}`}>
+                    {featuredItem.categoryLabel}
+                  </span>
+                  <span class="card-date">{formatDate(featuredItem.date)}</span>
+                </div>
+              </div>
+            </a>
+          )}
+        </div>
+
+        {/* Right Column: Projects - Now using large card style (was Blog style) */}
+        <div class="col-projects">
+          <div class="col-items">
+            {projectItems_col.map(item => (
+              <a
+                href={item.url}
+                class="card-item card-project-large"
+                style={`--brand-color: ${item.brandColor}`}
+              >
+                <div class="card-image-wrapper project-large-image-wrapper">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    class="card-image"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="card-content project-large-content">
+                  <h4 class="card-title card-title-project-large">
+                    <span class="card-dot" style={`background: ${item.brandColor}`}></span>
+                    {item.title}
+                  </h4>
+                  <div class="card-meta">
+                    <span class="card-tag" style={`color: ${item.brandColor}`}>
+                      {item.categoryLabel}
+                    </span>
+                    <span class="card-date">{formatDate(item.date)}</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  /* ===== Section Container ===== */
+  .latest-section {
+    padding: 80px 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .latest-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ===== Header ===== */
+  .latest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+  }
+
+  .latest-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .latest-heading {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #e5e5e5;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  .latest-subheading {
+    font-family: 'Courier New', 'SF Mono', monospace;
+    font-size: 12px;
+    color: #3f3f3f;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .latest-view-all {
+    font-family: 'Courier New', 'SF Mono', monospace;
+    font-size: 13px;
+    color: #525252;
+    text-decoration: none;
+    transition: color 0.4s ease;
+    white-space: nowrap;
+  }
+
+  .latest-view-all:hover {
+    color: #e5e5e5;
+  }
+
+  .latest-view-arrow {
+    display: inline-block;
+    transition: transform 0.4s ease;
+  }
+
+  .latest-view-all:hover .latest-view-arrow {
+    transform: translateX(4px);
+  }
+
+  /* ===== Title Row ===== */
+  .title-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .column-title {
+    font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-size: 20px;
+    font-weight: 600;
+    color: #e5e5e5;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== Three Column Layout ===== */
+  .three-col-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* Column Items Container */
+  .col-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* ===== Card Base ===== */
+  .card-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.3s ease;
+  }
+
+  .card-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+  }
+
+  .card-content {
+    padding-top: 12px;
+  }
+
+  /* Card Title */
+  .card-title {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    color: #d4d4d4;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+    position: relative;
+    top: -1px;
+    transition: box-shadow 0.3s ease;
+  }
+
+  /* Card Meta */
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Courier New', 'SF Mono', monospace;
+    font-size: 12px;
+  }
+
+  .card-tag {
+    transition: color 0.3s ease;
+  }
+
+  .card-date {
+    color: #525252;
+  }
+
+  .card-date::before {
+    content: '·';
+    margin-right: 8px;
+    color: #333;
+  }
+
+  /* ===== Left Column: Blog Cards (Image Left, Text Right - Compact) ===== */
+  .card-blog-compact {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .blog-compact-image-wrapper {
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  .blog-compact-content {
+    padding-top: 0;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-title-blog-compact {
+    font-size: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+
+  /* ===== Center Column: Featured Card ===== */
+  .col-featured {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-featured {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .featured-image-wrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .featured-content {
+    padding-top: 16px;
+  }
+
+  .card-title-featured {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .card-description {
+    font-size: 14px;
+    color: #a3a3a3;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ===== Right Column: Project Cards (Image Top, Text Bottom - Large) ===== */
+  .project-large-image-wrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-large-content {
+    padding-top: 12px;
+  }
+
+  .card-title-project-large {
+    font-size: 17px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ===== Hover Effects ===== */
+  .three-col-layout:hover .card-item {
+    opacity: 0.5;
+  }
+
+  .three-col-layout:hover .card-item:hover {
+    opacity: 1;
+  }
+
+  .card-item:hover .card-image {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  .card-item:hover .card-title {
+    color: var(--brand-color);
+  }
+
+  .card-item:hover .card-dot {
+    box-shadow: 0 0 8px var(--brand-color);
+  }
+
+  /* ===== Responsive (≤960px) ===== */
+  @media (max-width: 960px) {
+    .title-row {
+      display: none;
+    }
+
+    .three-col-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    /* Show mobile titles */
+    .col-blog::before,
+    .col-projects::before {
+      content: attr(data-title);
+      display: block;
+      font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 20px;
+      font-weight: 600;
+      color: #e5e5e5;
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .col-blog::before {
+      content: "Recent Blogs";
+    }
+
+    .col-projects::before {
+      content: "Recent Projects";
+    }
+
+    /* Blog and Project columns: 2 column grid */
+    .col-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* Blog compact cards: revert to image top, text bottom */
+    .card-blog-compact {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .blog-compact-image-wrapper {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+
+    .blog-compact-content {
+      padding-top: 12px;
+    }
+
+    .card-title-blog-compact {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+  }
+
+  /* ===== Mobile (≤480px) ===== */
+  @media (max-width: 480px) {
+    .latest-section {
+      padding: 48px 0;
+    }
+
+    .latest-heading {
+      font-size: 26px;
+    }
+
+    .col-title {
+      font-size: 22px;
+    }
+
+    .card-title-featured {
+      font-size: 22px;
+    }
+
+    .card-title-blog-compact,
+    .card-title-project-large {
+      font-size: 15px;
+    }
+  }
+</style>

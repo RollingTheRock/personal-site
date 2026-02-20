@@ -5,36 +5,116 @@ import { getCollection } from 'astro:content';
 
 const videos = await getCollection('videos');
 const sortedVideos = videos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// 确定布局模式
+const isSingleVideo = sortedVideos.length === 1;
 ---
 
 <BaseLayout title="视频" description="我的视频内容">
   <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-    <!-- Header -->
-    <div class="text-center mb-12 page-transition">
-      <h1 class="text-3xl md:text-4xl font-serif font-bold mb-4">视频</h1>
-      <p class="text-[var(--text-secondary)] max-w-lg mx-auto">
-        我的视频内容
-      </p>
+    <!-- Page Header -->
+    <div class="page-header page-transition">
+      <div class="page-header-left">
+        <h1 class="page-header-title">Videos</h1>
+        <p class="page-header-subtitle">我的视频内容</p>
+      </div>
+      <div class="page-header-right">
+        <!-- 视频页暂无右侧元素，留空即可 -->
+      </div>
     </div>
 
-    <!-- Videos Grid -->
-    <div class="grid md:grid-cols-2 gap-8 page-transition">
-      {sortedVideos.map(video => (
-        <VideoCard
-          title={video.data.title}
-          slug={video.slug}
-          date={video.data.date}
-          platform={video.data.platform}
-          thumbnail={video.data.thumbnail}
-        />
-      ))}
-    </div>
+    <!-- Videos Layout -->
+    {isSingleVideo ? (
+      <!-- Single Video - Full Width -->
+      <div class="page-transition">
+        {sortedVideos.map(video => (
+          <VideoCard
+            title={video.data.title}
+            description={video.data.description}
+            slug={video.slug}
+            date={video.data.date}
+            platform={video.data.platform}
+            thumbnail={video.data.thumbnail}
+            layout="full"
+          />
+        ))}
+      </div>
+    ) : (
+      <!-- Multiple Videos - Grid -->
+      <div class="grid md:grid-cols-2 gap-6 page-transition videos-grid">
+        {sortedVideos.map(video => (
+          <VideoCard
+            title={video.data.title}
+            description={video.data.description}
+            slug={video.slug}
+            date={video.data.date}
+            platform={video.data.platform}
+            thumbnail={video.data.thumbnail}
+          />
+        ))}
+      </div>
+    )}
 
     <!-- Empty State -->
     {sortedVideos.length === 0 && (
       <div class="text-center py-20">
-        <p class="text-[var(--text-muted)]">暂无视频，敬请期待...</p>
+        <p class="text-[var(--text-muted)]">摄像头还没对准，剧本还没写完，勇气还在充电中。</p>
+        <p class="text-[var(--text-muted)] mt-2 text-sm">不过石头一直在推，总会滚到镜头前的。</p>
       </div>
     )}
   </div>
 </BaseLayout>
+
+<style>
+  /* Page Header Styles - 复用博客/项目页 */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+  }
+
+  .page-header-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 36px;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .page-header-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  /* Videos Grid - 互斥暗化效果（多视频时） */
+  .videos-grid:hover > article {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+  .videos-grid:hover > article:hover {
+    opacity: 1;
+  }
+  .videos-grid > article {
+    transition: opacity 0.3s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 960px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page-header-title {
+      font-size: 28px;
+    }
+  }
+</style>

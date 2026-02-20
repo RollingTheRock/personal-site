@@ -31,7 +31,7 @@ const ogImage = new URL(image, Astro.site || SITE_URL).toString();
 ---
 
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="system">
+<html lang="zh-CN" class="dark" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -63,20 +63,6 @@ const ogImage = new URL(image, Astro.site || SITE_URL).toString();
 
   <!-- JSON-LD Structured Data -->
   <JsonLd type={jsonLdType} />
-
-  <!-- Preload fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-  <!-- Theme script (inline to prevent flash) -->
-  <script is:inline>
-    (function() {
-      const theme = localStorage.getItem('theme') || 'system';
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
-      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    })();
-  </script>
 </head>
 <body class="min-h-screen flex flex-col">
   {!noHeader && <Header />}

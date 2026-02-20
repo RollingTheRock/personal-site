@@ -1,5 +1,4 @@
 ---
-import ThemeToggle from './ThemeToggle.astro';
 import MobileMenu from './MobileMenu.astro';
 import SearchModal from './SearchModal.astro';
 import { SITE_TITLE, NAV_LINKS } from '../utils/constants';
@@ -11,22 +10,18 @@ const currentPath = Astro.url.pathname;
   <div class="max-w-wide mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <!-- Logo -->
-      <a href="/" class="text-xl font-semibold font-serif tracking-tight hover:opacity-80 transition-opacity">
+      <a href="/" class="nav-logo">
         {SITE_TITLE}
       </a>
 
       <!-- Desktop Navigation -->
-      <nav class="hidden md:flex items-center space-x-1">
+      <nav class="hidden md:flex items-center space-x-8">
         {NAV_LINKS.map(link => {
           const isActive = currentPath === link.href || currentPath.startsWith(`${link.href}/`);
           return (
             <a
               href={link.href}
-              class={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'text-[var(--text-primary)] bg-[var(--bg-secondary)]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-              }`}
+              class={`nav-link ${isActive ? 'active' : ''}`}
             >
               {link.label}
             </a>
@@ -37,9 +32,40 @@ const currentPath = Astro.url.pathname;
       <!-- Right Side -->
       <div class="flex items-center space-x-2">
         <SearchModal />
-        <ThemeToggle />
         <MobileMenu currentPath={currentPath} />
       </div>
     </div>
   </div>
 </header>
+
+<style>
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 22px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav-logo:hover {
+    opacity: 0.8;
+  }
+
+  .nav-link {
+    font-size: 14px;
+    color: #9CA3AF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    padding: 0;
+  }
+
+  .nav-link:hover {
+    color: #ffffff;
+  }
+
+  .nav-link.active {
+    color: #ffffff;
+  }
+</style>

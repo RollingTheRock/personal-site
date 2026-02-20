@@ -1,5 +1,5 @@
 ---
-import { AUTHOR, SITE_TITLE, SITE_URL } from '../utils/constants';
+import { AUTHOR, SITE_TITLE, SITE_URL, GITHUB_URL, TWITTER_URL } from '../utils/constants';
 
 interface BlogPostingProps {
   type: 'BlogPosting';
@@ -85,8 +85,8 @@ function generateSchema() {
         name: AUTHOR.name,
         url: baseUrl,
         sameAs: [
-          'https://github.com/RollingTheRock',
-          'https://twitter.com/RollingTheRock',
+          GITHUB_URL,
+          TWITTER_URL,
         ],
         description: AUTHOR.bio,
       };

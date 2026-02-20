@@ -5,50 +5,98 @@ import { getPlatformName, type VideoPlatform } from '../utils/platform';
 
 interface Props {
   title: string;
+  description?: string;
   slug: string;
   date: Date;
   platform: VideoPlatform;
   thumbnail?: string;
+  layout?: 'grid' | 'full';
 }
 
-const { title, slug, date, platform, thumbnail } = Astro.props;
+const { title, description, slug, date, platform, thumbnail, layout = 'grid' } = Astro.props;
+
+const isFull = layout === 'full';
 ---
 
-<article class="group">
+<article class={`group ${isFull ? 'full-video' : 'video-card'}`}>
   <a href={`/videos/${slug}`} class="block">
     <!-- Thumbnail with Play Button -->
-    <div class="relative aspect-video overflow-hidden rounded-xl bg-[var(--bg-secondary)] img-hover">
+    <div class={`relative overflow-hidden rounded-xl bg-[var(--bg-secondary)] ${isFull ? 'aspect-video mb-6' : 'aspect-video mb-4'}`}>
       {thumbnail ? (
         <img
           src={thumbnail}
           alt={title}
-          class="w-full h-full object-cover"
+          class="w-full h-full object-cover grayscale hover-image"
         />
       ) : (
         <ImagePlaceholder alt={title} aspectRatio="16/9" class="w-full h-full" />
       )}
 
-      <div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-        <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-black ml-1">
+      <!-- Play Button Overlay -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="play-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="ml-1">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
         </div>
       </div>
-
-      <!-- Platform Badge -->
-      <div class="absolute bottom-3 left-3 px-2 py-1 bg-black/70 text-white text-xs rounded">
-        {getPlatformName(platform)}
-      </div>
     </div>
 
-    <div class="mt-4">
-      <h2 class="text-lg font-semibold group-hover:text-[var(--text-secondary)] transition-colors line-clamp-2">
-        {title}
+    <!-- Content -->
+    <div class={isFull ? 'max-w-3xl mx-auto text-center' : ''}>
+      <h2 class={`font-semibold group-hover:text-[#F97316] transition-colors ${isFull ? 'text-2xl md:text-3xl mb-3' : 'text-lg mb-2 line-clamp-2'}`}>
+        <span class="text-[#F97316] mr-1.5 text-[0.6em] align-middle">●</span>{title}
       </h2>
-      <p class="text-sm text-[var(--text-muted)] mt-1">
-        {formatDateFull(date)}
-      </p>
+
+      {isFull && description && (
+        <p class="text-base text-[var(--text-secondary)] mb-3">{description}</p>
+      )}
+
+      <div class={`text-xs text-[var(--text-muted)] ${isFull ? 'flex justify-center items-center gap-2' : ''}`}>
+        <span>{getPlatformName(platform)}</span>
+        {isFull && <span>·</span>}
+        <span>{formatDateFull(date)}</span>
+      </div>
     </div>
   </a>
 </article>
+
+<style>
+  /* Image grayscale effect */
+  .hover-image {
+    filter: grayscale(100%);
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+  .group:hover .hover-image {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  /* Play icon */
+  .play-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .group:hover .play-icon {
+    background: rgba(249, 115, 22, 0.3);
+    color: #F97316;
+  }
+
+  /* Full video layout */
+  .full-video .play-icon {
+    width: 64px;
+    height: 64px;
+  }
+  .full-video .play-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+</style>
