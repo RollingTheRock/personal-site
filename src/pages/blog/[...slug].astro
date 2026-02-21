@@ -4,7 +4,7 @@ import Comments from '../../components/Comments.astro';
 import ImagePlaceholder from '../../components/ImagePlaceholder.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import Subscribe from '../../components/Subscribe.astro';
-import { getAllPublishedPosts, getPostBySlug, getPostContent, type Post } from '../../lib/notion-cms.js';
+import { getAllPublishedPosts, getPostBySlug, getPostContent, extractHeadings, type Post } from '../../lib/notion-cms.js';
 import { calculateReadingTime } from '../../utils/readingTime';
 import { Markdown } from '@astropub/md';
 
@@ -30,21 +30,8 @@ const content = await getPostContent(post.id, post.slug, post.type);
 // 计算阅读时间
 const readingTime = calculateReadingTime(content);
 
-// 解析 Markdown 获取 headings（简化实现）
-const headings = content.split('\n')
-  .filter(line => line.startsWith('#'))
-  .map(line => {
-    const match = line.match(/^(#{1,6})\s+(.+)$/);
-    if (match) {
-      return {
-        depth: match[1].length,
-        slug: match[2].toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'),
-        text: match[2],
-      };
-    }
-    return null;
-  })
-  .filter(Boolean) as { depth: number; slug: string; text: string }[];
+// 从 HTML 内容中提取 headings 用于目录
+const headings = extractHeadings(content);
 
 // 分类颜色映射
 const categoryColorMap: Record<string, string> = {

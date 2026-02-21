@@ -3,6 +3,20 @@
  * Handles common blog block types
  */
 
+/**
+ * Generate URL-friendly slug from text
+ * Preserves Chinese characters, removes special chars
+ */
+function slugify(text: string): string {
+  return text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')     // Spaces to hyphens
+    .replace(/[^\w\u4e00-\u9fff-]/g, '') // Keep Chinese, letters, numbers, hyphens
+    .substring(0, 50);        // Limit length
+}
+
 interface RichText {
   type: string;
   text?: { content: string; link?: { url: string } | null };
@@ -77,14 +91,23 @@ function renderBlock(block: any, level: number = 0): string {
       const text = renderRichText(content.rich_text || []);
       return text ? `${indent}<p>${text}</p>\n` : `${indent}<p></p>\n`;
 
-    case 'heading_1':
-      return `${indent}<h1>${renderRichText(content.rich_text || [])}</h1>\n`;
+    case 'heading_1': {
+      const h1Text = renderRichText(content.rich_text || []);
+      const h1Slug = slugify(h1Text);
+      return `${indent}<h1 id="${h1Slug}">${h1Text}</h1>\n`;
+    }
 
-    case 'heading_2':
-      return `${indent}<h2>${renderRichText(content.rich_text || [])}</h2>\n`;
+    case 'heading_2': {
+      const h2Text = renderRichText(content.rich_text || []);
+      const h2Slug = slugify(h2Text);
+      return `${indent}<h2 id="${h2Slug}">${h2Text}</h2>\n`;
+    }
 
-    case 'heading_3':
-      return `${indent}<h3>${renderRichText(content.rich_text || [])}</h3>\n`;
+    case 'heading_3': {
+      const h3Text = renderRichText(content.rich_text || []);
+      const h3Slug = slugify(h3Text);
+      return `${indent}<h3 id="${h3Slug}">${h3Text}</h3>\n`;
+    }
 
     case 'bulleted_list_item': {
       const itemText = renderRichText(content.rich_text || []);

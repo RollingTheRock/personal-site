@@ -453,6 +453,29 @@ export async function getPostsByCategory(category: string): Promise<Post[]> {
 }
 
 /**
+ * Extract headings from HTML content for TOC generation
+ * Parses h1, h2, h3 tags with id attributes
+ */
+export function extractHeadings(html: string): { depth: number; slug: string; text: string }[] {
+  const headings: { depth: number; slug: string; text: string }[] = [];
+  // Match h1, h2, h3 tags with id attribute
+  const regex = /<h([1-3])[^>]*id="([^"]*)"[^>]*>(.*?)<\/h[1-3]>/gi;
+  let match;
+
+  while ((match = regex.exec(html)) !== null) {
+    const depth = parseInt(match[1]);
+    const slug = match[2];
+    // Strip inner HTML tags to get plain text
+    const text = match[3].replace(/<[^>]*>/g, '');
+    if (text && slug) {
+      headings.push({ depth, slug, text });
+    }
+  }
+
+  return headings;
+}
+
+/**
  * Get related posts (same category or tags)
  */
 export async function getRelatedPosts(currentSlug: string, categories: string[], tags: string[], limit: number = 3): Promise<Post[]> {
