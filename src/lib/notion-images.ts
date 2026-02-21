@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
-const IMAGE_DIR = 'public/images/notion';
+const IMAGE_DIR = 'dist/images/notion';
 
 // Ensure directory exists
 function ensureDir() {
