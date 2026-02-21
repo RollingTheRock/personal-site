@@ -108,8 +108,8 @@ function formatDate(dateString: string) {
       </div>
     </header>
 
-    <!-- Main Content with TOC -->
-    <div class="article-layout">
+    <!-- Main Content with TOC (conditionally rendered) -->
+    <div class={`article-layout ${headings.length === 0 ? 'article-layout-no-toc' : ''}`}>
       <!-- Content -->
       <div class="article-main">
         <div class="article-content" set:html={content} />
@@ -141,10 +141,12 @@ function formatDate(dateString: string) {
         </div>
       </div>
 
-      <!-- TOC Sidebar -->
-      <aside class="article-toc">
-        <TableOfContents headings={headings} />
-      </aside>
+      <!-- TOC Sidebar (only when headings exist) -->
+      {headings.length > 0 && (
+        <aside class="article-toc">
+          <TableOfContents headings={headings} />
+        </aside>
+      )}
     </div>
   </article>
 </BaseLayout>
@@ -269,6 +271,12 @@ function formatDate(dateString: string) {
   .article-toc {
     display: block;
     position: relative; /* Create new containing block */
+  }
+
+  /* Layout without TOC - single column centered */
+  .article-layout-no-toc {
+    grid-template-columns: 1fr;
+    max-width: var(--max-width-article, 720px);
   }
 
   /* Content Link Styles */
