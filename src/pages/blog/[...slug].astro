@@ -125,9 +125,7 @@ function formatDate(dateString: string) {
     <div class="article-layout">
       <!-- Content -->
       <div class="article-main">
-        <div class="article-content">
-          <Markdown of={content} />
-        </div>
+        <div class="article-content" set:html={content} />
 
         <!-- Tags -->
         {post.tags.length > 0 && (

@@ -107,9 +107,7 @@ function formatDateYearMonth(dateString: string) {
 
     <!-- Content -->
     <div class="max-w-article mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="article-content">
-        <Markdown of={content} />
-      </div>
+      <div class="article-content" set:html={content} />
 
       <!-- Share Buttons -->
       <div class="mt-12 pt-8 border-t border-[var(--border-color)]">
