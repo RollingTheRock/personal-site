@@ -3,6 +3,8 @@
  * Handles common blog block types
  */
 
+import { downloadNotionImage } from './notion-images';
+
 /**
  * Generate URL-friendly slug from text
  * Preserves Chinese characters, removes special chars
@@ -74,9 +76,9 @@ function renderRichText(richText: RichText[]): string {
 }
 
 /**
- * Render a single block to HTML
+ * Render a single block to HTML (async for image processing)
  */
-function renderBlock(block: any, level: number = 0): string {
+async function renderBlock(block: any, level: number = 0): Promise<string> {
   if (!block) return '';
 
   const type = block.type;
@@ -111,13 +113,13 @@ function renderBlock(block: any, level: number = 0): string {
 
     case 'bulleted_list_item': {
       const itemText = renderRichText(content.rich_text || []);
-      const children = block.children ? renderBlocks(block.children, level + 1) : '';
+      const children = block.children ? await renderBlocks(block.children, level + 1) : '';
       return `${indent}<li>${itemText}${children}</li>\n`;
     }
 
     case 'numbered_list_item': {
       const numText = renderRichText(content.rich_text || []);
-      const children = block.children ? renderBlocks(block.children, level + 1) : '';
+      const children = block.children ? await renderBlocks(block.children, level + 1) : '';
       return `${indent}<li>${numText}${children}</li>\n`;
     }
 
@@ -146,8 +148,11 @@ function renderBlock(block: any, level: number = 0): string {
 
       if (!url) return '';
 
+      // Download Notion images to local storage
+      const localUrl = await downloadNotionImage(url);
+
       const captionHtml = caption ? `\n${indent}  <figcaption>${caption}</figcaption>` : '';
-      return `${indent}<figure>\n${indent}  <img src="${url}" alt="${caption}" loading="lazy" />${captionHtml}\n${indent}</figure>\n`;
+      return `${indent}<figure>\n${indent}  <img src="${localUrl}" alt="${caption}" loading="lazy" />${captionHtml}\n${indent}</figure>\n`;
     }
 
     case 'quote':
@@ -171,7 +176,7 @@ function renderBlock(block: any, level: number = 0): string {
 
     case 'toggle': {
       const toggleText = renderRichText(content.rich_text || []);
-      const toggleChildren = block.children ? renderBlocks(block.children, level + 1) : '';
+      const toggleChildren = block.children ? await renderBlocks(block.children, level + 1) : '';
       return `${indent}<details class="toggle-block">\n${indent}  <summary>${toggleText}</summary>\n${indent}  <div class="toggle-content">\n${toggleChildren}${indent}  </div>\n${indent}</details>\n`;
     }
 
@@ -298,12 +303,12 @@ function groupListItems(blocks: any[]): any[] {
 }
 
 /**
- * Render grouped list structure
+ * Render grouped list structure (async for image processing)
  */
-function renderGroupedBlock(block: any, level: number = 0): string {
+async function renderGroupedBlock(block: any, level: number = 0): Promise<string> {
   if (block.type === 'ul' || block.type === 'ol') {
     const tag = block.type === 'ul' ? 'ul' : 'ol';
-    const items = block.items.map((item: any) => renderBlock(item, level + 1)).join('');
+    const items = (await Promise.all(block.items.map((item: any) => renderBlock(item, level + 1)))).join('');
     const indent = '  '.repeat(level);
     return `${indent}<${tag}>\n${items}${indent}</${tag}>\n`;
   }
@@ -311,20 +316,21 @@ function renderGroupedBlock(block: any, level: number = 0): string {
 }
 
 /**
- * Render blocks to HTML string
+ * Render blocks to HTML string (async for image processing)
  */
-export function renderBlocks(blocks: any[], level: number = 0): string {
+export async function renderBlocks(blocks: any[], level: number = 0): Promise<string> {
   if (!blocks || blocks.length === 0) return '';
 
   // Group consecutive list items
   const grouped = groupListItems(blocks);
 
-  return grouped.map(block => renderGroupedBlock(block, level)).join('');
+  const rendered = await Promise.all(grouped.map(block => renderGroupedBlock(block, level)));
+  return rendered.join('');
 }
 
 /**
  * Convert Notion blocks to HTML string (main entry point)
  */
-export function blocksToHtml(blocks: any[]): string {
+export async function blocksToHtml(blocks: any[]): Promise<string> {
   return renderBlocks(blocks);
 }

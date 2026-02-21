@@ -30,3 +30,6 @@ pnpm-debug.log*
 
 # local content
 *.local
+
+# Downloaded Notion images (auto-generated during build)
+public/images/notion/

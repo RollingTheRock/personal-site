@@ -1,6 +1,7 @@
 import { queryDatabase, getPageBlocks, isNotionConfigured, NOTION_DATABASE_ID } from './notion';
 import { blocksToHtml } from './notion-renderer';
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { downloadNotionImage } from './notion-images';
 
 export interface Post {
   id: string;
@@ -116,8 +117,12 @@ function getPropertyValue(property: any): any {
 /**
  * Convert Notion page to Post object
  */
-function pageToPost(page: any): Post {
+async function pageToPost(page: any): Promise<Post> {
   const properties = page.properties;
+
+  // Download cover image if from Notion
+  const notionImageUrl = getPropertyValue(properties['封面图']);
+  const image = await downloadNotionImage(notionImageUrl);
 
   return {
     id: page.id,
@@ -125,7 +130,7 @@ function pageToPost(page: any): Post {
     slug: getPropertyValue(properties['Slug']),
     description: getPropertyValue(properties['摘要']),
     date: getPropertyValue(properties['发布日期']),
-    image: getPropertyValue(properties['封面图']),
+    image,
     categories: getPropertyValue(properties['分类']) as string[],
     tags: getPropertyValue(properties['标签']) as string[],
     featured: getPropertyValue(properties['置顶']) as boolean,
@@ -156,7 +161,7 @@ export async function getAllPublishedPosts(): Promise<Post[]> {
           },
         ]
       );
-      notionPosts = response.results.map(pageToPost);
+      notionPosts = await Promise.all(response.results.map(pageToPost));
     } catch (error) {
       console.warn('Notion API 获取失败，使用本地回退:', error);
     }
@@ -200,7 +205,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       );
 
       if (response.results.length > 0) {
-        return pageToPost(response.results[0]);
+        return await pageToPost(response.results[0]);
       }
     } catch (error) {
       console.warn('Notion API 获取失败，尝试本地回退:', error);
@@ -279,7 +284,7 @@ export async function getPostContent(pageId: string, slug?: string, type?: strin
       // Notion API requires ID without dashes
       const apiPageId = toNotionApiId(pageId);
       const blocks = await getPageBlocks(apiPageId);
-      return blocksToHtml(blocks);
+      return await blocksToHtml(blocks);
     } catch (error) {
       console.warn('Notion 内容获取失败，尝试本地回退:', error);
     }
@@ -332,7 +337,7 @@ export async function getFeaturedPosts(): Promise<Post[]> {
           },
         ]
       );
-      notionPosts = response.results.map(pageToPost);
+      notionPosts = await Promise.all(response.results.map(pageToPost));
     } catch (error) {
       console.warn('Notion API 获取失败，使用本地回退:', error);
     }
@@ -382,7 +387,7 @@ export async function getPostsByType(type: '博客' | '项目' | '视频'): Prom
           },
         ]
       );
-      notionPosts = response.results.map(pageToPost);
+      notionPosts = await Promise.all(response.results.map(pageToPost));
     } catch (error) {
       console.warn('Notion API 获取失败，使用本地回退:', error);
     }
@@ -433,7 +438,7 @@ export async function getPostsByCategory(category: string): Promise<Post[]> {
           },
         ]
       );
-      notionPosts = response.results.map(pageToPost);
+      notionPosts = await Promise.all(response.results.map(pageToPost));
     } catch (error) {
       console.warn('Notion API 获取失败，使用本地回退:', error);
     }
