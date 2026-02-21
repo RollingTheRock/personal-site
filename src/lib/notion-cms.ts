@@ -247,11 +247,26 @@ async function getLocalProjectContent(slug: string): Promise<string | null> {
 
 /**
  * Check if ID looks like a valid Notion page ID (UUID format)
- * Notion IDs are 32-character hex strings without dashes
+ * Notion IDs can be with or without dashes: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or 32 hex chars
  */
 function isValidNotionPageId(id: string): boolean {
-  // Must be exactly 32 hex characters
-  return /^[a-f0-9]{32}$/i.test(id);
+  if (!id) return false;
+  // Check for standard UUID format with dashes (36 chars)
+  if (/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id)) {
+    return true;
+  }
+  // Check for 32 hex characters without dashes
+  if (/^[a-f0-9]{32}$/i.test(id)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Convert Notion page ID to API format (no dashes)
+ */
+function toNotionApiId(id: string): string {
+  return id.replace(/-/g, '');
 }
 
 /**
@@ -261,7 +276,9 @@ export async function getPostContent(pageId: string, slug?: string, type?: strin
   // 1. 尝试从 Notion 获取（仅在ID是有效的Notion UUID时）
   if (isNotionConfigured() && isValidNotionPageId(pageId)) {
     try {
-      const blocks = await getPageBlocks(pageId);
+      // Notion API requires ID without dashes
+      const apiPageId = toNotionApiId(pageId);
+      const blocks = await getPageBlocks(apiPageId);
       return blocksToHtml(blocks);
     } catch (error) {
       console.warn('Notion 内容获取失败，尝试本地回退:', error);
