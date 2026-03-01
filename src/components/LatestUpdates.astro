@@ -46,9 +46,14 @@ const sortedItems = allItems.sort((a, b) => b.date.valueOf() - a.date.valueOf())
 const featuredItem = sortedItems[0] || null;
 const remainingItems = sortedItems.slice(1);
 
-// 分组：左侧博客（非项目），右侧项目
-const blogItems_col = remainingItems.filter(item => !item.isProject);
-const projectItems_col = remainingItems.filter(item => item.isProject);
+// 分组：左侧博客（非项目），右侧项目，并限制数量
+const blogItems_col = remainingItems
+  .filter(item => !item.isProject)
+  .slice(0, 4);  // 限制 4 篇博客
+
+const projectItems_col = remainingItems
+  .filter(item => item.isProject)
+  .slice(0, 3);  // 限制 3 个项目
 
 // 格式化日期
 function formatDate(date: Date): string {

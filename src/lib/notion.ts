@@ -18,12 +18,13 @@ export function isNotionConfigured(): boolean {
 /**
  * Query Notion database
  */
-export async function queryDatabase(filter?: any, sorts?: any[]): Promise<any> {
+export async function queryDatabase(filter?: any, sorts?: any[], pageSize?: number): Promise<any> {
   const url = `${NOTION_API}/databases/${NOTION_DATABASE_ID}/query`;
 
   const body: any = {};
   if (filter) body.filter = filter;
   if (sorts) body.sorts = sorts;
+  if (pageSize) body.page_size = pageSize;
 
   const res = await fetch(url, {
     method: 'POST',
