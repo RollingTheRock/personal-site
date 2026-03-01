@@ -53,7 +53,7 @@ const blogItems_col = remainingItems
 
 const projectItems_col = remainingItems
   .filter(item => item.isProject)
-  .slice(0, 3);  // 限制 3 个项目
+  .slice(0, 2);  // 限制 2 个项目
 
 // 格式化日期
 function formatDate(date: Date): string {
@@ -280,7 +280,7 @@ function formatDate(date: Date): string {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: 2.5rem;
-    align-items: start;
+    align-items: stretch;  /* 拉伸等高 */
   }
 
   /* Column Items Container */
@@ -288,6 +288,20 @@ function formatDate(date: Date): string {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  /* Left and Right columns: flex layout for height alignment */
+  .col-blog,
+  .col-projects {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col-blog .col-items,
+  .col-projects .col-items {
+    justify-content: space-between;
+    height: 100%;
+    flex: 1;
   }
 
   /* ===== Card Base ===== */
@@ -411,6 +425,9 @@ function formatDate(date: Date): string {
 
   .featured-content {
     padding-top: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .card-title-featured {
@@ -427,6 +444,7 @@ function formatDate(date: Date): string {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex: 1;  /* 填充剩余空间 */
   }
 
   /* ===== Right Column: Project Cards (Image Top, Text Bottom - Large) ===== */
