@@ -146,7 +146,17 @@ function formatDateYearMonth(dateString: string) {
       <RelatedProjects
         currentSlug={project.slug}
         tech={project.tags}
-        allProjects={allProjects.map(p => ({ ...p, data: { title: p.title, tech: p.tags } }))}
+        allProjects={allProjects.map(p => ({
+          ...p,
+          data: {
+            title: p.title,
+            description: p.description,
+            tech: p.techStack || p.tags,
+            image: p.image,
+            github: p.github,
+            demo: p.demo
+          }
+        }))}
       />
     </div>
   </article>
