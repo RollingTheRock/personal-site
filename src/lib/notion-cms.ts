@@ -14,6 +14,9 @@ export interface Post {
   tags: string[];
   featured: boolean;
   type: '博客' | '项目' | '视频';
+  github?: string;
+  demo?: string;
+  techStack?: string[];
 }
 
 // ============================================================================
@@ -61,6 +64,9 @@ async function getLocalProjects(): Promise<Post[]> {
       tags: entry.data.tech,
       featured: entry.data.featured,
       type: '项目' as const,
+      github: entry.data.github,
+      demo: entry.data.demo,
+      techStack: entry.data.tech,
     }));
   } catch (error) {
     console.warn('读取本地项目失败:', error);
@@ -109,6 +115,8 @@ function getPropertyValue(property: any): any {
         }
       }
       return '';
+    case 'url':
+      return property.url || '';
     default:
       return '';
   }
@@ -135,6 +143,9 @@ async function pageToPost(page: any): Promise<Post> {
     tags: getPropertyValue(properties['标签']) as string[],
     featured: getPropertyValue(properties['置顶']) as boolean,
     type: getPropertyValue(properties['类型']) as '博客' | '项目' | '视频',
+    github: getPropertyValue(properties['GitHub']) || undefined,
+    demo: getPropertyValue(properties['Demo']) || undefined,
+    techStack: getPropertyValue(properties['技术栈']) as string[] | undefined,
   };
 }
 

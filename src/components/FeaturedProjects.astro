@@ -54,7 +54,7 @@ const projectPosts = featuredProjects.filter(post => post.type === '项目');
               </p>
 
               <div class="project-tags flex flex-wrap gap-2 mb-6">
-                {project.tags.map((tag) => (
+                {(project.techStack || project.tags || []).map((tag) => (
                   <span
                     class="px-3 py-1 text-[12px] text-[#a3a3a3] rounded-lg"
                     style="border: 1px solid #333; background: transparent;"
@@ -66,15 +66,26 @@ const projectPosts = featuredProjects.filter(post => post.type === '项目');
             </a>
 
             <div class="project-links flex gap-4">
-              {project.slug === 'fomo-killer' && (
+              {project.github && (
                 <a
-                  href="https://github.com/RollingTheRock/ai-daily-digest"
+                  href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-[#06B6D4] hover:underline text-sm"
                   onclick="event.stopPropagation()"
                 >
                   GitHub →
+                </a>
+              )}
+              {project.demo && (
+                <a
+                  href={project.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-[#A855F7] hover:underline text-sm"
+                  onclick="event.stopPropagation()"
+                >
+                  Demo →
                 </a>
               )}
             </div>

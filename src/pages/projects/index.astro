@@ -27,8 +27,9 @@ const projects = await getPostsByType('项目');
           description={project.description}
           slug={project.slug}
           image={project.image}
-          tech={project.tags}
-          github={project.slug === 'fomo-killer' ? 'https://github.com/RollingTheRock/ai-daily-digest' : undefined}
+          tech={project.techStack || project.tags}
+          github={project.github}
+          demo={project.demo}
         />
       ))}
     </div>

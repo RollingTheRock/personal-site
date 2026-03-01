@@ -36,10 +36,9 @@ const { title, description, slug, image, tech, github, demo } = Astro.props;
         {description}
       </p>
 
-      <div class="text-xs text-[var(--text-secondary)]">
-        {tech.slice(0, 5).map((t, i) => (
-          <span>
-            {i > 0 && <span class="mx-1">·</span>}
+      <div class="flex flex-wrap gap-2 mt-auto">
+        {(tech || []).slice(0, 5).map((t) => (
+          <span class="px-2 py-1 text-xs rounded bg-transparent border border-[#333] text-[#a3a3a3] font-mono">
             {t}
           </span>
         ))}
